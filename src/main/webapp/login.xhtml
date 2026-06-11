@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="primefaces"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Admin Login</title>
+    <style>
+        body {
+            background-color: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            margin: 0 15px;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .login-header h2 {
+            margin: 0;
+            color: #1a1a2e;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .login-header p {
+            color: #555;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .ui-float-label {
+            margin-top: 15px;
+        }
+        .login-button {
+            width: 100%;
+            margin-top: 25px !important;
+            border-radius: 25px !important;
+            padding: 10px 0 !important;
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            background: linear-gradient(90deg, #11998e, #38ef7d) !important;
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4) !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+        }
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 239, 125, 0.6) !important;
+        }
+        .ui-messages {
+            margin-bottom: 20px;
+        }
+    </style>
+</h:head>
+<h:body>
+    <p:card styleClass="login-card">
+        <div class="login-header">
+            <img src="https://mspace.co.ke/img/new-mspace-logo.jpeg" alt="MSpace Logo" style="max-width: 200px; margin-bottom: 15px;" />
+            <h2>Staff Management</h2>
+            <p>Admin Portal Login</p>
+        </div>
+        
+        <h:form id="loginForm">
+            <p:messages id="messages" showDetail="false" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+            
+            <div class="ui-fluid">
+                <div class="p-field" style="margin-bottom: 1.5rem;">
+                    <p:outputLabel for="username" value="Username" style="font-weight: 600; margin-bottom: 5px; display: block;"/>
+                    <p:inputText id="username" value="#{loginBean.username}" required="true" requiredMessage="Username is required" style="padding: 10px; border-radius: 6px;" />
+                </div>
+                
+                <div class="p-field" style="margin-bottom: 1rem;">
+                    <p:outputLabel for="password" value="Password" style="font-weight: 600; margin-bottom: 5px; display: block;"/>
+                    <p:password id="password" value="#{loginBean.password}" required="true" requiredMessage="Password is required" style="padding: 10px; border-radius: 6px; width: 100%;" />
+                </div>
+            </div>
+            
+            <p:commandButton value="Secure Login" action="#{loginBean.login}" styleClass="ui-button-primary login-button" update="@form" />
+        </h:form>
+    </p:card>
+</h:body>
+</html>

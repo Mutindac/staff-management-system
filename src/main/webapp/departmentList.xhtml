@@ -1,0 +1,105 @@
+<ui:composition template="template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="primefaces"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <ui:define name="title">Department List - Staff Management</ui:define>
+
+    <ui:define name="content">
+        <p:card styleClass="premium-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="page-title" style="margin: 0;">Departments</h2>
+                <h:form style="margin:0;">
+                    <p:commandButton value="Add Department" action="#{departmentBean.prepareAddDepartment}" oncomplete="PF('addDepartmentDialog').show()" update="addDepartmentForm" styleClass="btn-primary" icon="pi pi-plus" style="margin-top: 0 !important; padding: 5px 12px !important; font-size: 0.85rem !important;" />
+                </h:form>
+            </div>
+            
+            <h:form id="listForm">
+                <p:dataTable id="departmentTable" widgetVar="departmentTable" value="#{departmentBean.departmentList}" var="s" paginator="true" rows="10" styleClass="ui-datatable-striped" emptyMessage="No departments found">
+                    
+                    <f:facet name="header">
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                            <p:commandButton value="Export PDF" icon="pi pi-file-pdf" styleClass="ui-button-danger ui-button-outlined" ajax="false">
+                                <p:dataExporter type="pdf" target="departmentTable" fileName="department_list"/>
+                            </p:commandButton>
+                            <span class="ui-input-icon-left">
+                                <i class="pi pi-search" style="margin-left: 10px;"></i>
+                                <p:inputText id="globalFilter" onkeyup="PF('departmentTable').filter()" placeholder="    Type here to search..." style="width: 250px; border-radius: 20px; padding-left: 30px;"/>
+                            </span>
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="ID" width="80" sortBy="#{s.departmentId}" filterBy="#{s.departmentId}" filterMatchMode="contains">
+                        <h:outputText value="#{s.departmentId}" />
+                    </p:column>
+                    <p:column headerText="Name" sortBy="#{s.name}" filterBy="#{s.name}" filterMatchMode="contains">
+                        <h:outputText value="#{s.name}" />
+                    </p:column>
+                    <p:column headerText="Description" sortBy="#{s.description}" filterBy="#{s.description}" filterMatchMode="contains">
+                        <h:outputText value="#{s.description}" />
+                    </p:column>
+                    <p:column headerText="Actions" width="100" style="text-align: center;" exportable="false">
+                        <p:commandButton icon="pi pi-pencil" styleClass="ui-button-rounded ui-button-info ui-button-flat" 
+                                         action="#{departmentBean.prepareUpdateDepartment(s)}" oncomplete="PF('updateDepartmentDialog').show()" update="updateDepartmentForm" style="margin-right: 5px;"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:card>
+
+        <!-- Add Department Dialog -->
+        <p:dialog header="Add Department" widgetVar="addDepartmentDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500">
+            <h:form id="addDepartmentForm">
+                <p:messages id="messages" showDetail="false" closable="true"><p:autoUpdate/></p:messages>
+                
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid form-grid" columnClasses="ui-grid-col-4, ui-grid-col-8">            
+                    <p:outputLabel for="name" value="Department Name"/>
+                    <p:inputText id="name" value="#{departmentBean.department.name}" required="true"/>
+                    
+                    <p:outputLabel for="description" value="Department Description"/>
+                    <p:inputTextarea id="description" value="#{departmentBean.department.description}" required="true" rows="3"/>
+                </p:panelGrid> 
+                
+                <div style="margin-top: 20px; text-align: right;">
+                    <p:commandButton value="Cancel" type="button" styleClass="ui-button-secondary" onclick="PF('addDepartmentDialog').hide()" style="margin-right: 10px;" />
+                    <p:commandButton value="Add Department" styleClass="btn-primary" action="#{departmentBean.addDepartment(departmentBean.department)}" update="listForm @form" oncomplete="if (!args.validationFailed) PF('addDepartmentDialog').hide()" icon="pi pi-building">
+                        <p:resetInput target="addDepartmentForm" />
+                    </p:commandButton>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <!-- Update Department Dialog -->
+        <p:dialog header="Update Department" widgetVar="updateDepartmentDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500">
+            <h:form id="updateDepartmentForm">
+                <p:messages id="updateMessages" showDetail="false" closable="true"><p:autoUpdate/></p:messages>
+                
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid form-grid" columnClasses="ui-grid-col-4, ui-grid-col-8">            
+                    <p:outputLabel for="name" value="Department Name"/>
+                    <p:inputText id="name" value="#{departmentBean.department.name}" required="true" readonly="true"/>
+                    
+                    <p:outputLabel for="description" value="Department Description"/>
+                    <p:inputTextarea id="description" value="#{departmentBean.department.description}" required="true" rows="3"/>
+                </p:panelGrid> 
+                
+                <div style="margin-top: 20px; text-align: right;">
+                    <p:commandButton value="Cancel" type="button" styleClass="ui-button-secondary" onclick="PF('updateDepartmentDialog').hide()" style="margin-right: 10px;" />
+                    <p:commandButton value="Save Changes" styleClass="btn-primary" action="#{departmentBean.updateDepartment(departmentBean.department)}" update="listForm @form" oncomplete="if (!args.validationFailed) PF('updateDepartmentDialog').hide()" icon="pi pi-save" />
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <!-- Script to auto-open dialog if directed from sidebar -->
+        <h:outputScript>
+            //<![CDATA[
+            $(document).ready(function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if(urlParams.get('openAdd') === 'true') {
+                    setTimeout(function() { PF('addDepartmentDialog').show(); }, 200);
+                }
+            });
+            //]]>
+        </h:outputScript>
+    </ui:define>
+</ui:composition>

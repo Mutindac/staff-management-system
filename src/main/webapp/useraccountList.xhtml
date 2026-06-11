@@ -1,0 +1,28 @@
+<ui:composition template="template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="primefaces"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <ui:define name="title">User Accounts - Staff Management</ui:define>
+
+    <ui:define name="content">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="page-title">User Accounts</h2>
+            <p:button value="Add User Account" outcome="adduseraccount.xhtml" styleClass="btn-primary" icon="pi pi-plus" />
+        </div>
+        
+        <p:card styleClass="premium-card">
+            <!-- Utilizing userraccountBean (from the previous file list) -->
+            <h:form id="listForm">
+                <!-- If the bean isn't fully wired for a list, this is a placeholder -->
+                <p:dataTable var="u" emptyMessage="No user accounts found." styleClass="ui-datatable-striped">
+                    <p:column headerText="ID" width="50"></p:column>
+                    <p:column headerText="Username"></p:column>
+                    <p:column headerText="Role"></p:column>
+                </p:dataTable>
+            </h:form>
+        </p:card>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,227 @@
+<ui:composition template="template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="primefaces"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <ui:define name="title">Staff List - Staff Management</ui:define>
+
+    <ui:define name="content">
+        <p:card styleClass="premium-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="page-title" style="margin: 0;">Staff Register</h2>
+                <h:form style="margin:0;">
+                    <p:commandButton value="Add New Staff" action="#{staffBean.prepareAddStaff}" oncomplete="PF('addStaffDialog').show()" update="addStaffForm" styleClass="btn-primary" icon="pi pi-plus" style="margin-top: 0 !important; padding: 5px 12px !important; font-size: 0.85rem !important;" />
+                </h:form>
+            </div>
+            
+            <h:form id="listForm">
+                <p:dataTable id="staffTable" widgetVar="staffTable" value="#{staffBean.staffList}" var="s" paginator="true" rows="10" styleClass="ui-datatable-striped" emptyMessage="No staff found with given criteria">
+                    
+                    <f:facet name="header">
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                            <p:commandButton value="Export PDF" icon="pi pi-file-pdf" styleClass="ui-button-danger ui-button-outlined" ajax="false">
+                                <p:dataExporter type="pdf" target="staffTable" fileName="staff_list"/>
+                            </p:commandButton>
+                            <span class="ui-input-icon-left">
+                                <i class="pi pi-search" style="margin-left: 10px;"></i>
+                                <p:inputText id="globalFilter" onkeyup="PF('staffTable').filter()" placeholder="    Type here to search..." style="width: 250px; border-radius: 20px; padding-left: 30px;"/>
+                            </span>
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="ID" width="50" sortBy="#{s.staffId}" filterBy="#{s.staffId}" filterMatchMode="contains">
+                        <h:outputText value="#{s.staffId}" />
+                    </p:column>
+                    <p:column headerText="First Name" sortBy="#{s.firstName}" filterBy="#{s.firstName}" filterMatchMode="contains">
+                        <h:outputText value="#{s.firstName}" />
+                    </p:column>
+                    <p:column headerText="Last Name" sortBy="#{s.lastName}" filterBy="#{s.lastName}" filterMatchMode="contains">
+                        <h:outputText value="#{s.lastName}" />
+                    </p:column>
+                    <p:column headerText="Email" sortBy="#{s.email}" filterBy="#{s.email}" filterMatchMode="contains">
+                        <h:outputText value="#{s.email}" />
+                    </p:column>
+                    <p:column headerText="Department" sortBy="#{staffBean.getDepartmentName(s)}" filterBy="#{staffBean.getDepartmentName(s)}" filterMatchMode="contains">
+                        <p:tag severity="info" value="#{staffBean.getDepartmentName(s)}"></p:tag>
+                    </p:column>
+                    <p:column headerText="Role" sortBy="#{staffBean.getRoleTitle(s)}" filterBy="#{staffBean.getRoleTitle(s)}" filterMatchMode="contains">
+                        <h:outputText value="#{staffBean.getRoleTitle(s)}" />
+                    </p:column>
+                    <p:column headerText="Status" sortBy="#{s.status}" filterBy="#{s.status}" filterMatchMode="exact">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('staffTable').filter()" styleClass="ui-custom-filter" style="width:100%">
+                                <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItem itemLabel="ACTIVE" itemValue="ACTIVE" />
+                                <f:selectItem itemLabel="INACTIVE" itemValue="INACTIVE" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <p:tag severity="#{s.status == 'ACTIVE' ? 'success' : 'warning'}" value="#{s.status}"></p:tag>
+                    </p:column>
+                    <p:column headerText="Actions" width="160" style="text-align: center;" exportable="false">
+                        <p:commandButton icon="pi pi-eye" styleClass="ui-button-rounded ui-button-success ui-button-flat" 
+                                         action="#{staffBean.prepareViewStaff(s)}" oncomplete="PF('viewStaffDialog').show()" update="viewStaffDialog" style="margin-right: 5px;"/>
+                        <p:commandButton icon="pi pi-pencil" styleClass="ui-button-rounded ui-button-info ui-button-flat" 
+                                         action="#{staffBean.prepareUpdateStaff(s)}" oncomplete="PF('updateStaffDialog').show()" update="updateStaffForm" style="margin-right: 5px;"/>
+                        <p:commandButton icon="pi pi-trash" styleClass="ui-button-rounded ui-button-danger ui-button-flat" 
+                                         action="#{staffBean.deleteStaff(s.staffId)}" update="@form">
+                            <p:confirm header="Confirmation" message="Delete this staff member?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" />
+                </p:confirmDialog>
+            </h:form>
+        </p:card>
+
+        <!-- Add Staff Dialog -->
+        <p:dialog header="Add New Staff" widgetVar="addStaffDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="800" responsive="true" fitViewport="true">
+            <h:form id="addStaffForm">
+                <p:messages id="messages" showDetail="false" closable="true"><p:autoUpdate/></p:messages>
+                <p:panelGrid columns="4" layout="grid" styleClass="ui-fluid form-grid" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4">
+                    <p:outputLabel for="fname" value="First Name:" />
+                    <p:inputText id="fname" value="#{staffBean.staff.firstName}" required="true" />
+                    
+                    <p:outputLabel for="lname" value="Last Name:" />
+                    <p:inputText id="lname" value="#{staffBean.staff.lastName}" required="true" />
+
+                    <p:outputLabel for="email" value="Email:" />
+                    <p:inputText id="email" value="#{staffBean.staff.email}" required="true" validatorMessage="Invalid email format">
+                        <f:validateRegex pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" />
+                    </p:inputText>
+
+                    <p:outputLabel for="phone" value="Phone:" />
+                    <p:inputText id="phone" value="#{staffBean.staff.phone}" maxlength="13" validatorMessage="Phone number must be at most 13 digits">
+                        <f:validateRegex pattern="^[0-9]{0,13}$" />
+                        <p:keyFilter mask="pint" />
+                    </p:inputText>
+                    
+                    <p:outputLabel for="hireDate" value="Hire Date:" />
+                    <p:calendar id="hireDate" value="#{staffBean.staff.hireDate}" pattern="yyyy-MM-dd" />
+                    
+                    <p:outputLabel for="department" value="Department:" />
+                    <p:selectOneMenu id="department" value="#{staffBean.staff.departmentId}">
+                        <f:selectItems value="#{departmentBean.departmentList}" var="d"
+                                       itemValue="#{d.departmentId}" itemLabel="#{d.name}" />
+                    </p:selectOneMenu>
+                    
+                    <p:outputLabel for="role" value="Role:" />
+                    <p:selectOneMenu id="role" value="#{staffBean.staff.roleId}">
+                        <f:selectItems value="#{roleBean.roleList}" var="r"
+                                       itemValue="#{r.roleId}" itemLabel="#{r.title}" />
+                    </p:selectOneMenu>
+                    
+                    <p:outputLabel for="status" value="Status:"/>
+                    <p:selectOneMenu id="status" value="#{staffBean.staff.status}">
+                        <f:selectItem itemLabel="Active" itemValue="ACTIVE"/>
+                        <f:selectItem itemLabel="Inactive" itemValue="INACTIVE"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <div style="margin-top: 20px; text-align: right;">
+                    <p:commandButton value="Cancel" type="button" styleClass="ui-button-secondary" onclick="PF('addStaffDialog').hide()" style="margin-right: 10px;" />
+                    <p:commandButton value="Save Staff" styleClass="btn-primary" action="#{staffBean.addStaff(staffBean.staff)}" update="listForm @form" oncomplete="if (!args.validationFailed) PF('addStaffDialog').hide()" icon="pi pi-check" />
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <!-- Update Staff Dialog -->
+        <p:dialog header="Update Staff" widgetVar="updateStaffDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="800" responsive="true" fitViewport="true">
+            <h:form id="updateStaffForm">
+                <p:messages id="updateMessages" showDetail="false" closable="true"><p:autoUpdate/></p:messages>
+                <p:panelGrid columns="4" layout="grid" styleClass="ui-fluid form-grid" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4">
+                    <p:outputLabel for="fname" value="First Name:" />
+                    <p:inputText id="fname" value="#{staffBean.staff.firstName}" required="true" readonly="true" />
+                    
+                    <p:outputLabel for="lname" value="Last Name:" />
+                    <p:inputText id="lname" value="#{staffBean.staff.lastName}" required="true" readonly="true" />
+
+                    <p:outputLabel for="email" value="Email:" />
+                    <p:inputText id="email" value="#{staffBean.staff.email}" required="true" validatorMessage="Invalid email format">
+                        <f:validateRegex pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" />
+                    </p:inputText>
+
+                    <p:outputLabel for="phone" value="Phone:" />
+                    <p:inputText id="phone" value="#{staffBean.staff.phone}" maxlength="13" validatorMessage="Phone number must be at most 13 digits">
+                        <f:validateRegex pattern="^[0-9]{0,13}$" />
+                    </p:inputText>
+                    
+                    <p:outputLabel for="hireDate" value="Hire Date:" />
+                    <p:calendar id="hireDate" value="#{staffBean.staff.hireDate}" pattern="yyyy-MM-dd" />
+                    
+                    <p:outputLabel for="department" value="Department:" />
+                    <p:selectOneMenu id="department" value="#{staffBean.staff.departmentId}">
+                        <f:selectItems value="#{departmentBean.departmentList}" var="d"
+                                       itemValue="#{d.departmentId}" itemLabel="#{d.name}" />
+                    </p:selectOneMenu>
+                    
+                    <p:outputLabel for="role" value="Role:" />
+                    <p:selectOneMenu id="role" value="#{staffBean.staff.roleId}">
+                        <f:selectItems value="#{roleBean.roleList}" var="r"
+                                       itemValue="#{r.roleId}" itemLabel="#{r.title}" />
+                    </p:selectOneMenu>
+                    
+                    <p:outputLabel for="status" value="Status:"/>
+                    <p:selectOneMenu id="status" value="#{staffBean.staff.status}">
+                        <f:selectItem itemLabel="Active" itemValue="ACTIVE"/>
+                        <f:selectItem itemLabel="Inactive" itemValue="INACTIVE"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <div style="margin-top: 20px; text-align: right;">
+                    <p:commandButton value="Cancel" type="button" styleClass="ui-button-secondary" onclick="PF('updateStaffDialog').hide()" style="margin-right: 10px;" />
+                    <p:commandButton value="Save Changes" styleClass="btn-primary" action="#{staffBean.updateStaff(staffBean.staff)}" update="listForm @form" oncomplete="if (!args.validationFailed) PF('updateStaffDialog').hide()" icon="pi pi-save" />
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <!-- View Staff Dialog -->
+        <p:dialog id="viewStaffDialog" header="Staff Details" widgetVar="viewStaffDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500">
+            <p:outputPanel id="staffDetail">
+                <div style="display: flex; align-items: flex-start; gap: 20px; padding: 10px;">
+                    <div style="background: linear-gradient(135deg, #0f3460, #e94560); color: white; width: 80px; height: 80px; border-radius: 40px; display: flex; justify-content: center; align-items: center; font-size: 32px; font-weight: 700;">
+                        <h:outputText value="#{staffBean.staff.firstName.substring(0,1)}#{staffBean.staff.lastName.substring(0,1)}" rendered="#{not empty staffBean.staff.firstName and not empty staffBean.staff.lastName}" />
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <h3 style="margin-top: 0; margin-bottom: 5px; font-size: 24px; color: #1a1a2e;">#{staffBean.staff.firstName} #{staffBean.staff.lastName}</h3>
+                        <p style="margin-top: 0; color: #666; font-size: 14px; margin-bottom: 15px;"><h:outputText value="#{staffBean.getRoleTitle(staffBean.staff)}" rendered="#{staffBean.staff.roleId > 0}" /></p>
+                        
+                        <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid form-grid" columnClasses="ui-grid-col-4, ui-grid-col-8" style="border:none; padding: 0;">
+                            <h:outputText value="Email:" style="font-weight: 600; color: #555;" />
+                            <h:outputText value="#{staffBean.staff.email}" />
+                            
+                            <h:outputText value="Phone:" style="font-weight: 600; color: #555;" />
+                            <h:outputText value="#{staffBean.staff.phone}" />
+                            
+                            <h:outputText value="Department:" style="font-weight: 600; color: #555;" />
+                            <h:outputText value="#{staffBean.getDepartmentName(staffBean.staff)}" rendered="#{staffBean.staff.departmentId > 0}" />
+                            
+                            <h:outputText value="Status:" style="font-weight: 600; color: #555;" />
+                            <p:tag severity="#{staffBean.staff.status == 'ACTIVE' ? 'success' : 'warning'}" value="#{staffBean.staff.status}" rendered="#{not empty staffBean.staff.status}"/>
+                            
+                            <h:outputText value="Hire Date:" style="font-weight: 600; color: #555;" />
+                            <h:outputText value="#{staffBean.staff.hireDate}">
+                                <f:convertDateTime pattern="MMM dd, yyyy" />
+                            </h:outputText>
+                        </p:panelGrid>
+                    </div>
+                </div>
+            </p:outputPanel>
+        </p:dialog>
+        
+        <!-- Script to auto-open dialog if directed from sidebar -->
+        <h:outputScript>
+            //<![CDATA[
+            $(document).ready(function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if(urlParams.get('openAdd') === 'true') {
+                    setTimeout(function() { PF('addStaffDialog').show(); }, 200);
+                }
+            });
+            //]]>
+        </h:outputScript>
+    </ui:define>
+</ui:composition>
