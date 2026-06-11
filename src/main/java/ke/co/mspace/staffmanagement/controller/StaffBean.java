@@ -7,17 +7,11 @@ import ke.co.mspace.staffmanagement.model.Staff;
 //import ke.co.mspace.staffmanagement.model.Department;
 import ke.co.mspace.staffmanagement.service.StaffService;
 import ke.co.mspace.staffmanagement.service.RoleService;
-import ke.co.mspace.staffmanagement.serviceimpl.StaffServiceimpl;
 import ke.co.mspace.staffmanagement.dao.StaffDAO;
-import ke.co.mspace.staffmanagement.daoimplementation.StaffDAOimpl;
 import ke.co.mspace.staffmanagement.util.DButil;
-import ke.co.mspace.staffmanagement.serviceimpl.RoleServiceimpl;
 import ke.co.mspace.staffmanagement.dao.RoleDAO;
-import ke.co.mspace.staffmanagement.daoimplementation.RoleDAOimpl;
 import ke.co.mspace.staffmanagement.dao.DepartmentDAO;
-import ke.co.mspace.staffmanagement.daoimplementation.DepartmentDAOimpl;
 import ke.co.mspace.staffmanagement.service.DepartmentService;
-import ke.co.mspace.staffmanagement.serviceimpl.DepartmentServiceimpl;
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -39,12 +33,12 @@ public class StaffBean implements Serializable{
     public StaffBean(){
         try {
             Connection conn = DButil.getConnection();
-            StaffDAO staffDAO = new StaffDAOimpl(conn);
-            RoleDAO roleDAO = new RoleDAOimpl(conn);
-            DepartmentDAO departmentDAO = new DepartmentDAOimpl(conn);
-            departmentService = new DepartmentServiceimpl(departmentDAO);
-            roleService = new RoleServiceimpl(roleDAO) ;
-            staffService = new StaffServiceimpl(staffDAO);
+            StaffDAO staffDAO = new StaffDAO(conn);
+            RoleDAO roleDAO = new RoleDAO(conn);
+            DepartmentDAO departmentDAO = new DepartmentDAO(conn);
+            departmentService = new DepartmentService(departmentDAO);
+            roleService = new RoleService(roleDAO) ;
+            staffService = new StaffService(staffDAO);
             staffList = staffService.getAllStaff();
         } catch (Exception e) {
             e.printStackTrace();

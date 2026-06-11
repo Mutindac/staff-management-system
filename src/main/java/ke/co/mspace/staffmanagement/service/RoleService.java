@@ -1,19 +1,33 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package ke.co.mspace.staffmanagement.service;
+
+import ke.co.mspace.staffmanagement.dao.RoleDAO;
 import ke.co.mspace.staffmanagement.model.Role;
 import java.util.List;
 
-/**
- *
- * @author server
- */
-public interface RoleService {
-    void addRole(Role role);
-    Role getRoleById(int roleId);
-    List<Role> getAllRoles();
-    void updateRole(Role role);
-    void deleteRole(int roleId);
+public class RoleService {
+    private RoleDAO roleDAO;
+
+    public RoleService(RoleDAO roleDAO) {
+        this.roleDAO = roleDAO;
+    }
+    
+    public void addRole(Role role){
+        roleDAO.saveRole(role);
+    }
+    
+    public Role getRoleById(int roleId){
+        return roleDAO.getRoleById(roleId);
+    }
+    
+    public List<Role> getAllRoles(){
+        return roleDAO.getAllRoles();
+    }
+    
+    public void updateRole(Role role){
+        roleDAO.updateRole(role);
+    }
+    
+    public void deleteRole(int roleId){
+        roleDAO.deleteRole(roleId);
+    }
 }

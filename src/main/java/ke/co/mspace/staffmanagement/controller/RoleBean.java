@@ -5,9 +5,7 @@
 package ke.co.mspace.staffmanagement.controller;
 import ke.co.mspace.staffmanagement.model.Role;
 import ke.co.mspace.staffmanagement.service.RoleService;
-import ke.co.mspace.staffmanagement.serviceimpl.RoleServiceimpl;
 import ke.co.mspace.staffmanagement.dao.RoleDAO;
-import ke.co.mspace.staffmanagement.daoimplementation.RoleDAOimpl;
 import ke.co.mspace.staffmanagement.util.DButil;
 import java.sql.Connection;
 import jakarta.inject.Named;
@@ -28,8 +26,8 @@ public class RoleBean implements Serializable {
     public RoleBean(){
         try {
             Connection conn = DButil.getConnection();
-            RoleDAO roleDAO = new RoleDAOimpl(conn);
-            roleService = new RoleServiceimpl(roleDAO);
+            RoleDAO roleDAO = new RoleDAO(conn);
+            roleService = new RoleService(roleDAO);
             roleList = roleService.getAllRoles();
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,10 +84,11 @@ public class RoleBean implements Serializable {
         if (roleList == null) {
             if(roleService == null){
                 System.out.println(" Role is null....");
-                try{
+                try {
                     Connection conn = DButil.getConnection();
-                    RoleDAO roleDAO = new RoleDAOimpl(conn);
-                    roleService = new RoleServiceimpl(roleDAO);
+                    RoleDAO roleDAO = new RoleDAO(conn);
+                    roleService = new RoleService(roleDAO);
+                    roleList = roleService.getAllRoles();
                 } catch(Exception e){
                     e.printStackTrace();
                 }

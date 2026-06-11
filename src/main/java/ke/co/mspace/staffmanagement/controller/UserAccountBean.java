@@ -5,9 +5,7 @@
 package ke.co.mspace.staffmanagement.controller;
 import ke.co.mspace.staffmanagement.model.UserAccount;
 import ke.co.mspace.staffmanagement.service.UserAccountService;
-import ke.co.mspace.staffmanagement.serviceimpl.UserAccountServiceimpl;
 import ke.co.mspace.staffmanagement.dao.UserAccountDAO;
-import ke.co.mspace.staffmanagement.daoimplementation.UserAccountDAOimpl;
 import ke.co.mspace.staffmanagement.util.DButil;
 import java.sql.Connection;
 import jakarta.inject.Named;
@@ -28,8 +26,8 @@ public class UserAccountBean implements Serializable{
     public UserAccountBean(){
         try {
             Connection conn = DButil.getConnection();
-            UserAccountDAO useraccountDAO = new UserAccountDAOimpl(conn);
-            useraccountService = new UserAccountServiceimpl(useraccountDAO);
+            UserAccountDAO useraccountDAO = new UserAccountDAO(conn);
+            useraccountService = new UserAccountService(useraccountDAO);
             useraccountList = useraccountService.getAllUserAccounts();
         } catch (Exception e) {
             e.printStackTrace();

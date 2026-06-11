@@ -6,10 +6,8 @@ import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import ke.co.mspace.staffmanagement.dao.UserAccountDAO;
-import ke.co.mspace.staffmanagement.daoimplementation.UserAccountDAOimpl;
 import ke.co.mspace.staffmanagement.model.UserAccount;
 import ke.co.mspace.staffmanagement.service.UserAccountService;
-import ke.co.mspace.staffmanagement.serviceimpl.UserAccountServiceimpl;
 import ke.co.mspace.staffmanagement.util.DButil;
 
 import java.io.Serializable;
@@ -26,8 +24,8 @@ public class LoginBean implements Serializable {
     public LoginBean() {
         try {
             Connection conn = DButil.getConnection();
-            UserAccountDAO useraccountDAO = new UserAccountDAOimpl(conn);
-            useraccountService = new UserAccountServiceimpl(useraccountDAO);
+            UserAccountDAO useraccountDAO = new UserAccountDAO(conn);
+            useraccountService = new UserAccountService(useraccountDAO);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -4,9 +4,7 @@
  */
 package ke.co.mspace.staffmanagement.controller;
 import ke.co.mspace.staffmanagement.service.DepartmentService;
-import ke.co.mspace.staffmanagement.serviceimpl.DepartmentServiceimpl;
 import ke.co.mspace.staffmanagement.dao.DepartmentDAO;
-import ke.co.mspace.staffmanagement.daoimplementation.DepartmentDAOimpl;
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -29,8 +27,8 @@ public class DepartmentBean implements Serializable{
     public DepartmentBean(){
         try {
             Connection conn = DButil.getConnection();
-            DepartmentDAO departmentDAO = new DepartmentDAOimpl(conn);
-            departmentService = new DepartmentServiceimpl(departmentDAO);           
+            DepartmentDAO departmentDAO = new DepartmentDAO(conn);
+            departmentService = new DepartmentService(departmentDAO);           
             departmentList = departmentService.getAllDepartments();
             System.out.println("Departments loaded");
         } catch (Exception e) {
@@ -91,8 +89,8 @@ public class DepartmentBean implements Serializable{
                 System.out.println("departmentService is null, initializing...");
                 try {
                     Connection conn = DButil.getConnection();
-                    DepartmentDAO departmentDAO = new DepartmentDAOimpl(conn);
-                    departmentService = new DepartmentServiceimpl(departmentDAO);
+                    DepartmentDAO departmentDAO = new DepartmentDAO(conn);
+                    departmentService = new DepartmentService(departmentDAO);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

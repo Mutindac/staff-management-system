@@ -1,18 +1,33 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package ke.co.mspace.staffmanagement.service;
+
+import ke.co.mspace.staffmanagement.dao.DepartmentDAO;
 import ke.co.mspace.staffmanagement.model.Department;
 import java.util.List;
-/**
- *
- * @author server
- */
-public interface DepartmentService {
-    void addDepartment(Department department);
-    Department getDepartmentById(int departmentId);
-    List<Department> getAllDepartments();
-    void updateDepartment(Department department);
-    void deleteDepartment(int departmentId);
+
+public class DepartmentService {
+    private DepartmentDAO departmentDAO;
+
+    public DepartmentService(DepartmentDAO departmentDAO) {
+        this.departmentDAO = departmentDAO;
+    }
+    
+    public void addDepartment(Department department){
+        departmentDAO.saveDepartment(department);
+    }
+    
+    public Department getDepartmentById(int departmentId){
+        return departmentDAO.getDepartmentById(departmentId);
+    }
+    
+    public List<Department> getAllDepartments(){
+        return departmentDAO.getAllDepartments();
+    }
+    
+    public void updateDepartment(Department department){
+        departmentDAO.updateDepartment(department);
+    }
+    
+    public void deleteDepartment(int departmentId){
+        departmentDAO.deleteDepartment(departmentId);
+    }
 }

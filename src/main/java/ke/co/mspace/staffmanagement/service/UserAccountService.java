@@ -1,19 +1,40 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package ke.co.mspace.staffmanagement.service;
+
+import ke.co.mspace.staffmanagement.dao.UserAccountDAO;
 import ke.co.mspace.staffmanagement.model.UserAccount;
 import java.util.List;
-/**
- *
- * @author server
- */
-public interface UserAccountService {
-    void addUserAccount(UserAccount useraccount);
-    UserAccount getUserAccountById (int userId);
-    List<UserAccount> getAllUserAccounts();
-    void updateUserAccount (UserAccount useraccount);
-    void deleteUserAccount(int userId);
-    UserAccount getUserAccountByUsername(String username);
+
+public class UserAccountService {
+    private UserAccountDAO useraccountDAO;
+
+    public UserAccountService(UserAccountDAO useraccountDAO) {
+        this.useraccountDAO = useraccountDAO;
+    }
+    
+    public void addUserAccount(UserAccount useraccount){
+        if(useraccount.getStaffId() == 0){
+            throw new IllegalArgumentException("UserAccount must have staff!");
+        }
+        useraccountDAO.saveUserAccount(useraccount);
+    }
+    
+    public UserAccount getUserAccountById (int userId){
+        return useraccountDAO.getUserAccountById(userId);
+    }
+    
+    public List<UserAccount> getAllUserAccounts(){
+        return useraccountDAO.getAllUserAccounts();
+    }
+    
+    public void updateUserAccount (UserAccount useraccount){
+        useraccountDAO.updateUserAccount(useraccount);
+    }
+    
+    public void deleteUserAccount(int userId){
+        useraccountDAO.deleteUserAccount(userId);
+    }
+    
+    public UserAccount getUserAccountByUsername(String username) {
+        return useraccountDAO.getUserAccountByUsername(username);
+    }
 }

@@ -6,20 +6,15 @@ package ke.co.mspace.staffmanagement.controller;
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import ke.co.mspace.staffmanagement.dao.RoleDAO;
+import ke.co.mspace.staffmanagement.dao.DepartmentDAO;
+import ke.co.mspace.staffmanagement.dao.StaffDAO;
 import ke.co.mspace.staffmanagement.service.StaffService;
 import ke.co.mspace.staffmanagement.service.DepartmentService;
 import ke.co.mspace.staffmanagement.service.RoleService;
 import java.sql.Connection;
 import ke.co.mspace.staffmanagement.util.DButil;
-import ke.co.mspace.staffmanagement.dao.DepartmentDAO;
-import ke.co.mspace.staffmanagement.dao.RoleDAO;
-import ke.co.mspace.staffmanagement.dao.StaffDAO;
-import ke.co.mspace.staffmanagement.daoimplementation.RoleDAOimpl;
-import ke.co.mspace.staffmanagement.daoimplementation.DepartmentDAOimpl;
-import ke.co.mspace.staffmanagement.daoimplementation.StaffDAOimpl;
-import ke.co.mspace.staffmanagement.serviceimpl.StaffServiceimpl;
-import ke.co.mspace.staffmanagement.serviceimpl.DepartmentServiceimpl;
-import ke.co.mspace.staffmanagement.serviceimpl.RoleServiceimpl;
+
 import jakarta.annotation.PostConstruct;
 import java.util.Map;
 import java.util.HashMap;
@@ -47,13 +42,13 @@ public class DashboardBean implements Serializable{
         try{
             //database connection
             Connection conn = DButil.getConnection();
-            RoleDAO roleDAO = new RoleDAOimpl(conn);
-            DepartmentDAO departmentDAO = new DepartmentDAOimpl(conn);
-            StaffDAO staffDAO = new StaffDAOimpl(conn);
+            RoleDAO roleDAO = new RoleDAO(conn);
+            DepartmentDAO departmentDAO = new DepartmentDAO(conn);
+            StaffDAO staffDAO = new StaffDAO(conn);
             
-            this.staffService = new StaffServiceimpl(staffDAO);
-            this.roleService = new RoleServiceimpl(roleDAO);
-            this.departmentService = new DepartmentServiceimpl(departmentDAO);
+            this.staffService = new StaffService(staffDAO);
+            this.roleService = new RoleService(roleDAO);
+            this.departmentService = new DepartmentService(departmentDAO);
             
             initCharts();
         }catch(Exception e){
