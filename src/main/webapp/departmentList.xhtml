@@ -21,6 +21,9 @@
                     
                     <f:facet name="header">
                         <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                            <p:commandButton value="Export CSV" icon="pi pi-file-excel" styleClass="ui-button-success ui-button-outlined" ajax="false">
+                                <p:dataExporter type="csv" target="departmentTable" fileName="department_list"/>
+                            </p:commandButton>
                             <p:commandButton value="Export PDF" icon="pi pi-file-pdf" styleClass="ui-button-danger ui-button-outlined" ajax="false">
                                 <p:dataExporter type="pdf" target="departmentTable" fileName="department_list"/>
                             </p:commandButton>

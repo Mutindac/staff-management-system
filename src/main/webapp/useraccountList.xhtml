@@ -11,15 +11,16 @@
         <p:card styleClass="premium-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 class="page-title" style="margin: 0;">User Accounts</h2>
-                <h:form style="margin:0;">
-                    <p:commandButton value="Add User Account" action="#{userAccountBean.prepareAdd}" update=":userDialogForm" oncomplete="PF('userDialog').show();" styleClass="btn-primary" icon="pi pi-plus" style="margin-top: 0 !important; padding: 5px 12px !important; font-size: 0.85rem !important;" />
-                </h:form>
+
             </div>
             <h:form id="listForm">
                 <p:dataTable id="useraccountTable" widgetVar="useraccountTable" value="#{userAccountBean.useraccountList}" var="account" emptyMessage="No user accounts found." styleClass="ui-datatable-striped" paginator="true" rows="10">
                     
                     <f:facet name="header">
                         <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                            <p:commandButton value="Export CSV" icon="pi pi-file-excel" styleClass="ui-button-success ui-button-outlined" ajax="false">
+                                <p:dataExporter type="csv" target="useraccountTable" fileName="useraccount_list"/>
+                            </p:commandButton>
                             <p:commandButton value="Export PDF" icon="pi pi-file-pdf" styleClass="ui-button-danger ui-button-outlined" ajax="false">
                                 <p:dataExporter type="pdf" target="useraccountTable" fileName="useraccount_list"/>
                             </p:commandButton>
@@ -104,15 +105,6 @@
             </h:form>
         </p:dialog>
         
-        <!-- Open modal automatically if openAdd parameter is true -->
-        <h:outputText rendered="#{param.openAdd == 'true'}">
-            <script type="text/javascript">
-                $(document).ready(function() {
-                    setTimeout(function() {
-                        PF('userDialog').show();
-                    }, 500);
-                });
-            </script>
-        </h:outputText>
+
     </ui:define>
 </ui:composition>

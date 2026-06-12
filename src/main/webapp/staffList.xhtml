@@ -21,6 +21,9 @@
                     
                     <f:facet name="header">
                         <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                            <p:commandButton value="Export CSV" icon="pi pi-file-excel" styleClass="ui-button-success ui-button-outlined" ajax="false">
+                                <p:dataExporter type="csv" target="staffTable" fileName="staff_list"/>
+                            </p:commandButton>
                             <p:commandButton value="Export PDF" icon="pi pi-file-pdf" styleClass="ui-button-danger ui-button-outlined" ajax="false">
                                 <p:dataExporter type="pdf" target="staffTable" fileName="staff_list"/>
                             </p:commandButton>
@@ -120,7 +123,28 @@
                         <f:selectItem itemLabel="Active" itemValue="ACTIVE"/>
                         <f:selectItem itemLabel="Inactive" itemValue="INACTIVE"/>
                     </p:selectOneMenu>
+                    
+                    <p:outputLabel for="createAccount" value="Create System Account?" />
+                    <p:selectBooleanCheckbox id="createAccount" value="#{staffBean.createAccount}">
+                        <p:ajax update="accountFields" />
+                    </p:selectBooleanCheckbox>
                 </p:panelGrid>
+                
+                <h:panelGroup id="accountFields">
+                    <p:panelGrid columns="4" layout="grid" styleClass="ui-fluid form-grid" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4" rendered="#{staffBean.createAccount}">
+                        <p:outputLabel for="username" value="Username:" />
+                        <p:inputText id="username" value="#{staffBean.userAccount.username}" required="#{staffBean.createAccount}" />
+                        
+                        <p:outputLabel for="password" value="Password:" />
+                        <p:password id="password" value="#{staffBean.newPassword}" required="#{staffBean.createAccount}" />
+                        
+                        <p:outputLabel for="accountRole" value="Account Role:" />
+                        <p:selectOneMenu id="accountRole" value="#{staffBean.userAccount.role}" required="#{staffBean.createAccount}">
+                            <f:selectItem itemLabel="Staff" itemValue="Staff" />
+                            <f:selectItem itemLabel="Admin" itemValue="Admin" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                </h:panelGroup>
                 <div style="margin-top: 20px; text-align: right;">
                     <p:commandButton value="Cancel" type="button" styleClass="ui-button-secondary" onclick="PF('addStaffDialog').hide()" style="margin-right: 10px;" />
                     <p:commandButton value="Save Staff" styleClass="btn-primary" action="#{staffBean.addStaff(staffBean.staff)}" update="listForm @form" oncomplete="if (!args.validationFailed) PF('addStaffDialog').hide()" icon="pi pi-check" />

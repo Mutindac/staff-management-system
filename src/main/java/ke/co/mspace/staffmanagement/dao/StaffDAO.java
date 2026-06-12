@@ -16,9 +16,10 @@ public class StaffDAO {
         this.connection = connection;
     }
     
-    public void saveStaff(Staff staff){
+    public int saveStaff(Staff staff){
+        int generatedId = 0;
         String sql = "INSERT INTO staff(firstName,LastName,email,phone,hireDate,departmentId,roleId,status) VALUES(?,?,?,?,?,?,?,?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)){
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
             stmt.setString(1, staff.getFirstName());
             stmt.setString(2, staff.getLastName());
             stmt.setString(3, staff.getEmail());
@@ -28,9 +29,16 @@ public class StaffDAO {
             stmt.setInt(7, staff.getRoleId());
             stmt.setString(8, staff.getStatus());
             stmt.executeUpdate();
+            
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    generatedId = rs.getInt(1);
+                }
+            }
         } catch (SQLException e){
             e.printStackTrace();
         }
+        return generatedId;
     }
     
     public Staff getStaffById(int staffId){

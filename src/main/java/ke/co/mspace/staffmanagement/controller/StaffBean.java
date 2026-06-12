@@ -5,13 +5,12 @@
 package ke.co.mspace.staffmanagement.controller;
 import ke.co.mspace.staffmanagement.model.Staff;
 //import ke.co.mspace.staffmanagement.model.Department;
-import ke.co.mspace.staffmanagement.service.StaffService;
-import ke.co.mspace.staffmanagement.service.RoleService;
 import ke.co.mspace.staffmanagement.dao.StaffDAO;
 import ke.co.mspace.staffmanagement.util.DButil;
 import ke.co.mspace.staffmanagement.dao.RoleDAO;
 import ke.co.mspace.staffmanagement.dao.DepartmentDAO;
-import ke.co.mspace.staffmanagement.service.DepartmentService;
+import ke.co.mspace.staffmanagement.model.UserAccount;
+import ke.co.mspace.staffmanagement.dao.UserAccountDAO;
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -24,22 +23,24 @@ import java.util.List;
 @Named("staffBean")
 @SessionScoped
 public class StaffBean implements Serializable{
-    private StaffService staffService;
+    private StaffDAO staffDAO;
     private Staff staff = new Staff();
     private List<Staff> staffList;
-    private RoleService roleService;
-    private DepartmentService departmentService;
+    private RoleDAO roleDAO;
+    private DepartmentDAO departmentDAO;
+    private UserAccountDAO userAccountDAO;
+    private UserAccount userAccount = new UserAccount();
+    private boolean createAccount;
+    private String newPassword;
 
     public StaffBean(){
         try {
             Connection conn = DButil.getConnection();
-            StaffDAO staffDAO = new StaffDAO(conn);
-            RoleDAO roleDAO = new RoleDAO(conn);
-            DepartmentDAO departmentDAO = new DepartmentDAO(conn);
-            departmentService = new DepartmentService(departmentDAO);
-            roleService = new RoleService(roleDAO) ;
-            staffService = new StaffService(staffDAO);
-            staffList = staffService.getAllStaff();
+            staffDAO = new StaffDAO(conn);
+            roleDAO = new RoleDAO(conn);
+            departmentDAO = new DepartmentDAO(conn);
+            userAccountDAO = new UserAccountDAO(conn);
+            staffList = staffDAO.getAllStaff();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,39 +53,54 @@ public class StaffBean implements Serializable{
         if(staff.getStatus() == null){
             staff.setStatus("ACTIVE");
         }
-        staffService.addStaff(staff);
-        staffList = staffService.getAllStaff();
+        int newStaffId = staffDAO.saveStaff(staff);
+        
+        if (createAccount && newStaffId > 0) {
+            userAccount.setStaffId(newStaffId);
+            if (newPassword != null && !newPassword.trim().isEmpty()) {
+                userAccount.setPasswordHash(newPassword);
+            }
+            userAccountDAO.saveUserAccount(userAccount);
+        }
+        
+        staffList = staffDAO.getAllStaff();
         this.staff = new Staff();
+        this.userAccount = new UserAccount();
+        this.newPassword = null;
+        this.createAccount = false;
     }
     
     //prepare add new staff
     public void prepareAddStaff(){
         this.staff = new Staff();
+        this.userAccount = new UserAccount();
+        this.newPassword = null;
+        this.createAccount = false;
     }
 
     //update staff
     public void updateStaff(Staff staff){
-        staffService.updateStaff(staff);
+        staffDAO.updateStaff(staff);
         System.out.println("Updating staff: " + staff);
-        staffList = staffService.getAllStaff();
+        staffList = staffDAO.getAllStaff();
     }
     
     //delete staff
     public String deleteStaff(int staffId){
-        staffService.deleteStaff(staffId);
-        staffList = staffService.getAllStaff();
+        staffDAO.deleteStaff(staffId);
+        staffList = staffDAO.getAllStaff();
         return "staffList.xhtml?faces-redirect=true";
     }
     
     //get staff by id
     public Staff getStaffById(int staffId){
-        return staffService.getStaffById(staffId);
+        return staffDAO.getStaffById(staffId);
     }
     
     //getters and setters
 
-    public StaffService getStaffService() {
-        return staffService;
+    public StaffDAO getStaffDAO() {
+        return staffDAO;
     }
 
     public Staff getStaff() {
@@ -99,8 +115,8 @@ public class StaffBean implements Serializable{
         return staffList;
     }
 
-    public void setStaffService(StaffService staffService) {
-        this.staffService = staffService;
+    public void setStaffDAO(StaffDAO staffDAO) {
+        this.staffDAO = staffDAO;
     }
 
     public void setStaff(Staff staff) {
@@ -111,15 +127,39 @@ public class StaffBean implements Serializable{
         this.staffList = staffList;
     }
     
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
+
+    public boolean isCreateAccount() {
+        return createAccount;
+    }
+
+    public void setCreateAccount(boolean createAccount) {
+        this.createAccount = createAccount;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+    
     
     //method for getting role title
     public String getRoleTitle(Staff staff){
-        return roleService.getRoleById(staff.getRoleId()).getTitle();
+        return roleDAO.getRoleById(staff.getRoleId()).getTitle();
     }
     
     //method for getting department name
     public String getDepartmentName(Staff staff){
-        return departmentService.getDepartmentById(staff.getDepartmentId()).getName();
+        return departmentDAO.getDepartmentById(staff.getDepartmentId()).getName();
     }
     
     //method for navigation to the update form when update button is clicked

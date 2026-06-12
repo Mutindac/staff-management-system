@@ -7,7 +7,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import ke.co.mspace.staffmanagement.dao.UserAccountDAO;
 import ke.co.mspace.staffmanagement.model.UserAccount;
-import ke.co.mspace.staffmanagement.service.UserAccountService;
+import ke.co.mspace.staffmanagement.dao.UserAccountDAO;
 import ke.co.mspace.staffmanagement.util.DButil;
 
 import java.io.Serializable;
@@ -19,13 +19,12 @@ public class LoginBean implements Serializable {
     private String username;
     private String password;
     private UserAccount loggedInUser;
-    private UserAccountService useraccountService;
+    private UserAccountDAO useraccountDAO;
 
     public LoginBean() {
         try {
             Connection conn = DButil.getConnection();
-            UserAccountDAO useraccountDAO = new UserAccountDAO(conn);
-            useraccountService = new UserAccountService(useraccountDAO);
+            useraccountDAO = new UserAccountDAO(conn);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -33,7 +32,7 @@ public class LoginBean implements Serializable {
 
     public String login() {
         FacesContext context = FacesContext.getCurrentInstance();
-        UserAccount user = useraccountService.getUserAccountByUsername(username);
+        UserAccount user = useraccountDAO.getUserAccountByUsername(username);
 
         if (user != null && user.getPasswordHash() != null && user.getPasswordHash().equals(password)) {
             loggedInUser = user;

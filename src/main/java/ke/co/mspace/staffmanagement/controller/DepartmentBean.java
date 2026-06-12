@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package ke.co.mspace.staffmanagement.controller;
-import ke.co.mspace.staffmanagement.service.DepartmentService;
 import ke.co.mspace.staffmanagement.dao.DepartmentDAO;
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
@@ -19,7 +18,7 @@ import java.sql.Connection;
 @Named("departmentBean")
 @SessionScoped
 public class DepartmentBean implements Serializable{
-    private DepartmentService departmentService;
+    private DepartmentDAO departmentDAO;
     private Department department = new Department();
     private List<Department> departmentList;
     
@@ -27,9 +26,8 @@ public class DepartmentBean implements Serializable{
     public DepartmentBean(){
         try {
             Connection conn = DButil.getConnection();
-            DepartmentDAO departmentDAO = new DepartmentDAO(conn);
-            departmentService = new DepartmentService(departmentDAO);           
-            departmentList = departmentService.getAllDepartments();
+            departmentDAO = new DepartmentDAO(conn);
+            departmentList = departmentDAO.getAllDepartments();
             System.out.println("Departments loaded");
         } catch (Exception e) {
              System.out.println("CONSTRUCTOR FAILED");
@@ -39,8 +37,8 @@ public class DepartmentBean implements Serializable{
     
     //add new department
     public void addDepartment(Department department){
-        departmentService.addDepartment(department);
-        departmentList = departmentService.getAllDepartments();
+        departmentDAO.saveDepartment(department);
+        departmentList = departmentDAO.getAllDepartments();
         this.department = new Department();
     }
     
@@ -56,26 +54,26 @@ public class DepartmentBean implements Serializable{
 
     //update department
     public String updateDepartment(Department department){
-        departmentService.updateDepartment(department);
-        departmentList = departmentService.getAllDepartments();
+        departmentDAO.updateDepartment(department);
+        departmentList = departmentDAO.getAllDepartments();
         return "departmentList.xhtml?faces-redirect=true";
     }
     
     //delete department
     public String deleteDepartment(int departmentId){
-        departmentService.deleteDepartment(departmentId);
-        departmentList = departmentService.getAllDepartments();
+        departmentDAO.deleteDepartment(departmentId);
+        departmentList = departmentDAO.getAllDepartments();
         return "departmentList.xhtml?faces-redirect=true";
     }
     
     //get department by id
     public Department getDepartmentById(int departmentId){
-        return departmentService.getDepartmentById(departmentId);
+        return departmentDAO.getDepartmentById(departmentId);
     }
 
     //getters and setters
-    public DepartmentService getDepartmentService() {
-        return departmentService;
+    public DepartmentDAO getDepartmentDAO() {
+        return departmentDAO;
     }
 
     public Department getDepartment() {
@@ -85,22 +83,21 @@ public class DepartmentBean implements Serializable{
     
     public List<Department> getDepartmentList() {
         if (departmentList == null) {
-            if (departmentService == null) {
-                System.out.println("departmentService is null, initializing...");
+            if (departmentDAO == null) {
+                System.out.println("departmentDAO is null, initializing...");
                 try {
                     Connection conn = DButil.getConnection();
-                    DepartmentDAO departmentDAO = new DepartmentDAO(conn);
-                    departmentService = new DepartmentService(departmentDAO);
+                    departmentDAO = new DepartmentDAO(conn);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            departmentList = departmentService.getAllDepartments();
+            departmentList = departmentDAO.getAllDepartments();
         }
         return departmentList;
     }
-    public void setDepartmentService(DepartmentService departmentService) {
-        this.departmentService = departmentService;
+    public void setDepartmentDAO(DepartmentDAO departmentDAO) {
+        this.departmentDAO = departmentDAO;
     }
 
     public void setDepartment(Department department) {

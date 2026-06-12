@@ -40,30 +40,19 @@
                         
                         <p:submenu label="Staff" icon="pi pi-shield">
                             <p:menuitem value="View Staff" outcome="staffList.xhtml" icon="pi pi-list"/>
-                            <p:menuitem value="Add Staff" outcome="staffList.xhtml" icon="pi pi-user-plus">
-                                <f:param name="openAdd" value="true"/>
-                            </p:menuitem>
                         </p:submenu>
                         
                         <p:submenu label="Departments" icon="pi pi-shield">
                             <p:menuitem value="View Departments" outcome="departmentList.xhtml" icon="pi pi-list"/>
-                            <p:menuitem value="Add Department" outcome="departmentList.xhtml" icon="pi pi-plus">
-                                <f:param name="openAdd" value="true"/>
-                            </p:menuitem>
                         </p:submenu>
                         
                         <p:submenu label="Roles" icon="pi pi-shield">
                             <p:menuitem value="View Roles" outcome="roleList.xhtml" icon="pi pi-list"/>
-                            <p:menuitem value="Add Role" outcome="roleList.xhtml" icon="pi pi-plus">
-                                <f:param name="openAdd" value="true"/>
-                            </p:menuitem>
                         </p:submenu>
                         
-                        <p:submenu label="System" icon="pi pi-shield">
+                        <p:submenu label="Accounts" icon="pi pi-shield">
                             <p:menuitem value="User Accounts" outcome="useraccountList.xhtml" icon="pi pi-shield"/>
-                            <p:menuitem value="Add User Account" outcome="useraccountList.xhtml" icon="pi pi-user-plus">
-                                <f:param name="openAdd" value="true"/>
-                            </p:menuitem>
+                            <p:menuitem value="Attendance Logs" outcome="attendanceList.xhtml" icon="pi pi-calendar-times"/>
                         </p:submenu>
                     </p:menu>
                     
@@ -100,7 +89,7 @@
                                         $(this).prepend('<span class="ui-menuitem-icon pi pi-building" style="margin-right: 10px; color: #e94560; font-size: 1.1rem; vertical-align: middle;"></span>');
                                     } else if(text === 'Roles' && $(this).find('.pi-id-card').length === 0) {
                                         $(this).prepend('<span class="ui-menuitem-icon pi pi-id-card" style="margin-right: 10px; color: #e94560; font-size: 1.1rem; vertical-align: middle;"></span>');
-                                    } else if(text === 'System' && $(this).find('.pi-cog').length === 0) {
+                                    } else if(text === 'Accounts' && $(this).find('.pi-cog').length === 0) {
                                         $(this).prepend('<span class="ui-menuitem-icon pi pi-cog" style="margin-right: 10px; color: #e94560; font-size: 1.1rem; vertical-align: middle;"></span>');
                                     }
                                 });

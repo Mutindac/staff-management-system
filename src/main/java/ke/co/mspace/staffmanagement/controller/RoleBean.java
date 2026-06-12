@@ -4,7 +4,6 @@
  */
 package ke.co.mspace.staffmanagement.controller;
 import ke.co.mspace.staffmanagement.model.Role;
-import ke.co.mspace.staffmanagement.service.RoleService;
 import ke.co.mspace.staffmanagement.dao.RoleDAO;
 import ke.co.mspace.staffmanagement.util.DButil;
 import java.sql.Connection;
@@ -19,16 +18,15 @@ import java.util.List;
 @Named("roleBean")
 @SessionScoped
 public class RoleBean implements Serializable {
-    private RoleService roleService;
+    private RoleDAO roleDAO;
     private Role role = new Role();
     private List<Role> roleList;
     
     public RoleBean(){
         try {
             Connection conn = DButil.getConnection();
-            RoleDAO roleDAO = new RoleDAO(conn);
-            roleService = new RoleService(roleDAO);
-            roleList = roleService.getAllRoles();
+            roleDAO = new RoleDAO(conn);
+            roleList = roleDAO.getAllRoles();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -36,8 +34,8 @@ public class RoleBean implements Serializable {
     
     //add new role
     public void addRole(Role role){
-        roleService.addRole(role);
-        roleList = roleService.getAllRoles();
+        roleDAO.saveRole(role);
+        roleList = roleDAO.getAllRoles();
         this.role = new Role();
     }
     
@@ -53,27 +51,27 @@ public class RoleBean implements Serializable {
 
     //update role
     public String updateRole(Role role){
-        roleService.updateRole(role);
-        roleList = roleService.getAllRoles();
+        roleDAO.updateRole(role);
+        roleList = roleDAO.getAllRoles();
         return "roleList.xhtml?faces-redirect=true";
     }
     
     //delete role
     public String deleteRole(int roleId){
-        roleService.deleteRole(roleId);
-        roleList = roleService.getAllRoles();
+        roleDAO.deleteRole(roleId);
+        roleList = roleDAO.getAllRoles();
         return "roleList.xhtml?faces-redirect=true";
     }
     
     //get role by id
     public Role getRoleById(int roleId){
-        return roleService.getRoleById(roleId);
+        return roleDAO.getRoleById(roleId);
     }
 
     //getters and setters
     
-    public RoleService getRoleService() {
-        return roleService;
+    public RoleDAO getRoleDAO() {
+        return roleDAO;
     }
 
     public Role getRole() {
@@ -82,24 +80,22 @@ public class RoleBean implements Serializable {
 
     public List<Role> getRoleList() {
         if (roleList == null) {
-            if(roleService == null){
+            if(roleDAO == null){
                 System.out.println(" Role is null....");
                 try {
                     Connection conn = DButil.getConnection();
-                    RoleDAO roleDAO = new RoleDAO(conn);
-                    roleService = new RoleService(roleDAO);
-                    roleList = roleService.getAllRoles();
+                    roleDAO = new RoleDAO(conn);
                 } catch(Exception e){
                     e.printStackTrace();
                 }
             }
-            roleList = roleService.getAllRoles();
+            roleList = roleDAO.getAllRoles();
         }
         return roleList;
     }
 
-    public void setRoleService(RoleService roleService) {
-        this.roleService = roleService;
+    public void setRoleDAO(RoleDAO roleDAO) {
+        this.roleDAO = roleDAO;
     }
 
     public void setRole(Role role) {

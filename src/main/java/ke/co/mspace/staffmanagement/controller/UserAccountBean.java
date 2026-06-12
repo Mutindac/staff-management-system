@@ -4,10 +4,8 @@
  */
 package ke.co.mspace.staffmanagement.controller;
 import ke.co.mspace.staffmanagement.model.UserAccount;
-import ke.co.mspace.staffmanagement.service.UserAccountService;
 import ke.co.mspace.staffmanagement.dao.UserAccountDAO;
 import ke.co.mspace.staffmanagement.model.Staff;
-import ke.co.mspace.staffmanagement.service.StaffService;
 import ke.co.mspace.staffmanagement.dao.StaffDAO;
 import ke.co.mspace.staffmanagement.util.DButil;
 import java.sql.Connection;
@@ -22,8 +20,8 @@ import java.util.List;
 @Named("userAccountBean")
 @SessionScoped
 public class UserAccountBean implements Serializable{
-    private UserAccountService useraccountService;
-    private StaffService staffService;
+    private UserAccountDAO useraccountDAO;
+    private StaffDAO staffDAO;
     private UserAccount userAccount = new UserAccount();
     private List<UserAccount> useraccountList;
     private List<Staff> availableStaffList;
@@ -32,14 +30,11 @@ public class UserAccountBean implements Serializable{
     public UserAccountBean(){
         try {
             Connection conn = DButil.getConnection();
-            UserAccountDAO useraccountDAO = new UserAccountDAO(conn);
-            useraccountService = new UserAccountService(useraccountDAO);
+            useraccountDAO = new UserAccountDAO(conn);
+            staffDAO = new StaffDAO(conn);
             
-            StaffDAO staffDAO = new StaffDAO(conn);
-            staffService = new StaffService(staffDAO);
-            
-            useraccountList = useraccountService.getAllUserAccounts();
-            availableStaffList = staffService.getAllStaff();
+            useraccountList = useraccountDAO.getAllUserAccounts();
+            availableStaffList = staffDAO.getAllStaff();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,25 +60,25 @@ public class UserAccountBean implements Serializable{
         }
         
         if (userAccount.getUserId() > 0) {
-            useraccountService.updateUserAccount(userAccount);
+            useraccountDAO.updateUserAccount(userAccount);
         } else {
-            useraccountService.addUserAccount(userAccount);
+            useraccountDAO.saveUserAccount(userAccount);
         }
         
-        useraccountList = useraccountService.getAllUserAccounts();
+        useraccountList = useraccountDAO.getAllUserAccounts();
         return null;
     }
     
     //delete userAccount
     public String deleteUserAccount(int userId){
-        useraccountService.deleteUserAccount(userId);
-        useraccountList = useraccountService.getAllUserAccounts();
+        useraccountDAO.deleteUserAccount(userId);
+        useraccountList = useraccountDAO.getAllUserAccounts();
         return null;
     }
     
     //get userAccount by id
     public UserAccount getUserAccountById (int userId){
-        return useraccountService.getUserAccountById(userId);
+        return useraccountDAO.getUserAccountById(userId);
     }
     
     // Getters and Setters
@@ -97,14 +92,14 @@ public class UserAccountBean implements Serializable{
 
     public List<UserAccount> getUseraccountList() {
         if (useraccountList == null) {
-            useraccountList = useraccountService.getAllUserAccounts();
+            useraccountList = useraccountDAO.getAllUserAccounts();
         }
         return useraccountList;
     }
 
     public List<Staff> getAvailableStaffList() {
-        if (availableStaffList == null && staffService != null) {
-            availableStaffList = staffService.getAllStaff();
+        if (availableStaffList == null && staffDAO != null) {
+            availableStaffList = staffDAO.getAllStaff();
         }
         return availableStaffList;
     }

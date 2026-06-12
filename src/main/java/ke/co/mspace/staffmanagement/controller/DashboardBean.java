@@ -9,9 +9,6 @@ import java.io.Serializable;
 import ke.co.mspace.staffmanagement.dao.RoleDAO;
 import ke.co.mspace.staffmanagement.dao.DepartmentDAO;
 import ke.co.mspace.staffmanagement.dao.StaffDAO;
-import ke.co.mspace.staffmanagement.service.StaffService;
-import ke.co.mspace.staffmanagement.service.DepartmentService;
-import ke.co.mspace.staffmanagement.service.RoleService;
 import java.sql.Connection;
 import ke.co.mspace.staffmanagement.util.DButil;
 
@@ -30,9 +27,9 @@ import ke.co.mspace.staffmanagement.model.Role;
 @Named("dashboardBean")
 @SessionScoped
 public class DashboardBean implements Serializable{
-    private StaffService staffService;
-    private DepartmentService departmentService;
-    private RoleService roleService;
+    private StaffDAO staffDAO;
+    private DepartmentDAO departmentDAO;
+    private RoleDAO roleDAO;
     
     private String departmentChartModel;
     private String statusChartModel;
@@ -42,13 +39,9 @@ public class DashboardBean implements Serializable{
         try{
             //database connection
             Connection conn = DButil.getConnection();
-            RoleDAO roleDAO = new RoleDAO(conn);
-            DepartmentDAO departmentDAO = new DepartmentDAO(conn);
-            StaffDAO staffDAO = new StaffDAO(conn);
-            
-            this.staffService = new StaffService(staffDAO);
-            this.roleService = new RoleService(roleDAO);
-            this.departmentService = new DepartmentService(departmentDAO);
+            roleDAO = new RoleDAO(conn);
+            departmentDAO = new DepartmentDAO(conn);
+            staffDAO = new StaffDAO(conn);
             
             initCharts();
         }catch(Exception e){
@@ -65,7 +58,7 @@ public class DashboardBean implements Serializable{
     private void createDepartmentChart() {
         String[] colors = {"#3b82f6", "#e94560", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"};
         Map<Integer, Integer> deptCounts = new HashMap<>();
-        for (Staff s : staffService.getAllStaff()) {
+        for (Staff s : staffDAO.getAllStaff()) {
             if (s.getDepartmentId() > 0) {
                 deptCounts.put(s.getDepartmentId(), deptCounts.getOrDefault(s.getDepartmentId(), 0) + 1);
             }
@@ -78,7 +71,7 @@ public class DashboardBean implements Serializable{
         int colorIdx = 0;
         boolean first = true;
         for (Map.Entry<Integer, Integer> entry : deptCounts.entrySet()) {
-            Department d = departmentService.getDepartmentById(entry.getKey());
+            Department d = departmentDAO.getDepartmentById(entry.getKey());
             if (d != null) {
                 if (!first) {
                     labels.append(",");
@@ -137,7 +130,7 @@ public class DashboardBean implements Serializable{
     
     private void createRoleChart() {
         Map<Integer, Integer> roleCounts = new HashMap<>();
-        for (Staff s : staffService.getAllStaff()) {
+        for (Staff s : staffDAO.getAllStaff()) {
             if (s.getRoleId() > 0) {
                 roleCounts.put(s.getRoleId(), roleCounts.getOrDefault(s.getRoleId(), 0) + 1);
             }
@@ -148,7 +141,7 @@ public class DashboardBean implements Serializable{
         
         boolean first = true;
         for (Map.Entry<Integer, Integer> entry : roleCounts.entrySet()) {
-            Role r = roleService.getRoleById(entry.getKey());
+            Role r = roleDAO.getRoleById(entry.getKey());
             if (r != null) {
                 if (!first) {
                     labels.append(",");
@@ -202,29 +195,29 @@ public class DashboardBean implements Serializable{
     
     //method for return total number of staff
     public int getTotalStaff(){
-        return staffService.getAllStaff().size();
+        return staffDAO.getAllStaff().size();
     }
     
     //method for getting total number of departmenta
     public int getAllDepartments(){
-        return departmentService.getAllDepartments().size();
+        return departmentDAO.getAllDepartments().size();
     }
     
     //method for getting total number or roles
     public int getAllRoles(){
-        return roleService.getAllRoles().size();
+        return roleDAO.getAllRoles().size();
     }
     
     //method for getting active staff
     public int getActiveStaff() {
-        return (int) staffService.getAllStaff().stream()
+        return (int) staffDAO.getAllStaff().stream()
                 .filter(s -> "ACTIVE".equalsIgnoreCase(s.getStatus()))
                 .count();
     }
     
     //method for getting inactive staff
     public int getInactiveStaff() {
-        return (int) staffService.getAllStaff().stream()
+        return (int) staffDAO.getAllStaff().stream()
                 .filter(s -> "INACTIVE".equalsIgnoreCase(s.getStatus()))
                 .count();
     }
