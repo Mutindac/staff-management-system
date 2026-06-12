@@ -29,6 +29,16 @@ public class UserAccountDAO {
         }
     }
     
+    private UserAccount mapRowToUserAccount(ResultSet rs) throws SQLException {
+        UserAccount useraccount = new UserAccount();
+        useraccount.setUserId(rs.getInt("userId"));
+        useraccount.setStaffId(rs.getInt("staffId"));
+        useraccount.setUsername(rs.getString("username"));
+        useraccount.setPasswordHash(rs.getString("passwordHash"));
+        useraccount.setRole(rs.getString("role"));
+        return useraccount;
+    }
+    
     public UserAccount getUserAccountById(int userId){
         UserAccount useraccount = new UserAccount();
         String sql = "SELECT * FROM useraccount WHERE userId  = ?";
@@ -36,10 +46,7 @@ public class UserAccountDAO {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
-                useraccount.setUserId(rs.getInt("userId"));
-                useraccount.setStaffId(rs.getInt("staffId"));
-                useraccount.setUsername(rs.getString("username"));
-                useraccount.setPasswordHash(rs.getString("passwordHash"));
+                useraccount = mapRowToUserAccount(rs);
             }
         } catch(SQLException e){
             e.printStackTrace();
@@ -48,13 +55,13 @@ public class UserAccountDAO {
     }
     
     public void updateUserAccount(UserAccount useraccount){
-        String sql = "UPDATE useraccount SET staffId = ?,username = ?, passwordHash = ?, role = ? WHERE userId = ?";
+        String sql = "UPDATE useraccount SET staffId = ?, username = ?, passwordHash = ?, role = ? WHERE userId = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)){
-            stmt.setInt(2, useraccount.getStaffId());
-            stmt.setString(3, useraccount.getUsername());
-            stmt.setString(4, useraccount.getPasswordHash());
-            stmt.setString(5, useraccount.getRole());
-            stmt.setInt(1, useraccount.getUserId());
+            stmt.setInt(1, useraccount.getStaffId());
+            stmt.setString(2, useraccount.getUsername());
+            stmt.setString(3, useraccount.getPasswordHash());
+            stmt.setString(4, useraccount.getRole());
+            stmt.setInt(5, useraccount.getUserId());
             stmt.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -78,12 +85,7 @@ public class UserAccountDAO {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
-                useraccount = new UserAccount();
-                useraccount.setUserId(rs.getInt("userId"));
-                useraccount.setStaffId(rs.getInt("staffId"));
-                useraccount.setUsername(rs.getString("username"));
-                useraccount.setPasswordHash(rs.getString("passwordHash"));
-                useraccount.setRole(rs.getString("role"));
+                useraccount = mapRowToUserAccount(rs);
             }
         } catch(SQLException e){
             e.printStackTrace();
@@ -97,14 +99,7 @@ public class UserAccountDAO {
         String sql = "SELECT * FROM useraccount";
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)){
             while (rs.next()){
-                UserAccount useraccount = new UserAccount();
-                useraccount.setUserId(rs.getInt("userId"));
-                useraccount.setStaffId(rs.getInt("staffId"));
-                useraccount.setUsername(rs.getString("username"));
-                useraccount.setPasswordHash(rs.getString("passwordHash"));
-                useraccount.setRole(rs.getString("role"));
-                useraccount.setStaffId(rs.getInt("staffId"));
-                UserAccountList.add(useraccount);
+                UserAccountList.add(mapRowToUserAccount(rs));
             }
         } catch (SQLException e){
             e.printStackTrace();

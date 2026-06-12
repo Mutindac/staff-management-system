@@ -36,15 +36,16 @@ public class LoginBean implements Serializable {
         UserAccount user = useraccountService.getUserAccountByUsername(username);
 
         if (user != null && user.getPasswordHash() != null && user.getPasswordHash().equals(password)) {
-            // Verify if user is an Admin. Depending on requirements, we can allow other roles too,
-            // but the request is specifically for "admin" login.
+            loggedInUser = user;
+            ExternalContext externalContext = context.getExternalContext();
+            externalContext.getSessionMap().put("loggedInUser", loggedInUser);
+            
             if ("Admin".equalsIgnoreCase(user.getRole())) {
-                loggedInUser = user;
-                ExternalContext externalContext = context.getExternalContext();
-                externalContext.getSessionMap().put("loggedInUser", loggedInUser);
                 return "index.xhtml?faces-redirect=true";
+            } else if ("Staff".equalsIgnoreCase(user.getRole())) {
+                return "staffProfile.xhtml?faces-redirect=true";
             } else {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Access Denied: Admin privileges required", null));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Access Denied: Unknown role", null));
                 return null;
             }
         } else {

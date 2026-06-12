@@ -61,7 +61,9 @@
                         
                         <p:submenu label="System" icon="pi pi-shield">
                             <p:menuitem value="User Accounts" outcome="useraccountList.xhtml" icon="pi pi-shield"/>
-                            <p:menuitem value="Add User Account" outcome="adduseraccount.xhtml" icon="pi pi-user-plus"/>
+                            <p:menuitem value="Add User Account" outcome="useraccountList.xhtml" icon="pi pi-user-plus">
+                                <f:param name="openAdd" value="true"/>
+                            </p:menuitem>
                         </p:submenu>
                     </p:menu>
                     

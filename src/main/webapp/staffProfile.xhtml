@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="primefaces">
+<h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>My Profile</title>
+    <h:outputStylesheet library="css" name="style.css" />
+    <style>
+        .staff-layout {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f4f6f9;
+        }
+        .staff-topbar {
+            height: 70px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        .staff-content {
+            margin-top: 90px;
+            padding: 20px 30px 60px 30px;
+            flex: 1;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+    </style>
+</h:head>
+<h:body>
+    <div class="staff-layout">
+        <div class="staff-topbar">
+            <div style="display: flex; align-items: center; font-weight: bold; font-size: 1.2rem; color: #1a1a2e;">
+                <i class="pi pi-user" style="margin-right: 10px; color: #e94560;"></i>
+                Staff Portal
+            </div>
+            <div style="display: flex; align-items: center;">
+                <span style="margin-right: 15px; color: #64748b; font-weight: 500;">
+                    Welcome, #{staffProfileBean.currentUserAccount.username}
+                </span>
+                <h:form style="margin: 0;">
+                    <p:commandButton value="Logout" action="#{loginBean.logout}" icon="pi pi-power-off" styleClass="ui-button-danger rounded-button ui-button-flat"/>
+                </h:form>
+            </div>
+        </div>
+
+        <div class="staff-content">
+            <p:messages id="messages" showDetail="false" closable="true">
+                <p:autoUpdate />
+            </p:messages>
+            
+            <p:card styleClass="premium-card">
+                <f:facet name="title">
+                    <h2 style="margin: 0; font-size: 1.5rem; color: #1e293b;"><i class="pi pi-id-card" style="color: #3b82f6; margin-right: 10px;"></i> My Profile</h2>
+                </f:facet>
+                
+                <h:form id="profileForm">
+                    <div class="ui-fluid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        
+                        <div class="p-field">
+                            <p:outputLabel value="First Name" style="font-weight: 600; color: #64748b;" />
+                            <p:inputText value="#{staffProfileBean.currentStaff.firstName}" readonly="true" style="background-color: #f1f5f9;" />
+                        </div>
+                        
+                        <div class="p-field">
+                            <p:outputLabel value="Last Name" style="font-weight: 600; color: #64748b;" />
+                            <p:inputText value="#{staffProfileBean.currentStaff.lastName}" readonly="true" style="background-color: #f1f5f9;" />
+                        </div>
+
+                        <div class="p-field">
+                            <p:outputLabel value="Department" style="font-weight: 600; color: #64748b;" />
+                            <p:inputText value="#{staffProfileBean.departmentName}" readonly="true" style="background-color: #f1f5f9;" />
+                        </div>
+                        
+                        <div class="p-field">
+                            <p:outputLabel value="Role" style="font-weight: 600; color: #64748b;" />
+                            <p:inputText value="#{staffProfileBean.roleName}" readonly="true" style="background-color: #f1f5f9;" />
+                        </div>
+                        
+                        <div class="p-field" style="grid-column: 1 / -1;">
+                            <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 10px 0;" />
+                            <h3 style="color: #1e293b; margin-bottom: 10px;"><i class="pi pi-envelope" style="color: #10b981; margin-right: 10px;"></i> Contact Information</h3>
+                        </div>
+
+                        <div class="p-field">
+                            <p:outputLabel for="email" value="Email Address" style="font-weight: 600;" />
+                            <p:inputText id="email" value="#{staffProfileBean.currentStaff.email}" required="true" requiredMessage="Email is required" validatorMessage="Invalid email format">
+                                <f:validateRegex pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" />
+                            </p:inputText>
+                        </div>
+                        
+                        <div class="p-field">
+                            <p:outputLabel for="phone" value="Phone Number" style="font-weight: 600;" />
+                            <p:inputText id="phone" value="#{staffProfileBean.currentStaff.phone}" required="true" requiredMessage="Phone is required" maxlength="13" />
+                        </div>
+
+                        <div class="p-field" style="grid-column: 1 / -1;">
+                            <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 10px 0;" />
+                            <h3 style="color: #1e293b; margin-bottom: 10px;"><i class="pi pi-lock" style="color: #f59e0b; margin-right: 10px;"></i> Security</h3>
+                            <p style="color: #64748b; font-size: 0.9rem; margin-top: 0;">Leave blank to keep your current password.</p>
+                        </div>
+
+                        <div class="p-field">
+                            <p:outputLabel for="newPassword" value="New Password" style="font-weight: 600;" />
+                            <p:inputText id="newPassword" value="#{staffProfileBean.newPassword}" placeholder="Type new password here..." />
+                        </div>
+                        
+                        <div class="p-field" style="display: flex; align-items: flex-end;">
+                            <p:commandButton value="Save Changes" action="#{staffProfileBean.updateProfile}" update="@form" styleClass="btn-primary" icon="pi pi-check" style="width: 100%; height: 42px;" />
+                        </div>
+                    </div>
+                </h:form>
+            </p:card>
+        </div>
+    </div>
+</h:body>
+</html>

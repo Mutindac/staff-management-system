@@ -8,21 +8,111 @@
     <ui:define name="title">User Accounts - Staff Management</ui:define>
 
     <ui:define name="content">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2 class="page-title">User Accounts</h2>
-            <p:button value="Add User Account" outcome="adduseraccount.xhtml" styleClass="btn-primary" icon="pi pi-plus" />
-        </div>
-        
         <p:card styleClass="premium-card">
-            <!-- Utilizing userraccountBean (from the previous file list) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="page-title" style="margin: 0;">User Accounts</h2>
+                <h:form style="margin:0;">
+                    <p:commandButton value="Add User Account" action="#{userAccountBean.prepareAdd}" update=":userDialogForm" oncomplete="PF('userDialog').show();" styleClass="btn-primary" icon="pi pi-plus" style="margin-top: 0 !important; padding: 5px 12px !important; font-size: 0.85rem !important;" />
+                </h:form>
+            </div>
             <h:form id="listForm">
-                <!-- If the bean isn't fully wired for a list, this is a placeholder -->
-                <p:dataTable var="u" emptyMessage="No user accounts found." styleClass="ui-datatable-striped">
-                    <p:column headerText="ID" width="50"></p:column>
-                    <p:column headerText="Username"></p:column>
-                    <p:column headerText="Role"></p:column>
+                <p:dataTable id="useraccountTable" widgetVar="useraccountTable" value="#{userAccountBean.useraccountList}" var="account" emptyMessage="No user accounts found." styleClass="ui-datatable-striped" paginator="true" rows="10">
+                    
+                    <f:facet name="header">
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                            <p:commandButton value="Export PDF" icon="pi pi-file-pdf" styleClass="ui-button-danger ui-button-outlined" ajax="false">
+                                <p:dataExporter type="pdf" target="useraccountTable" fileName="useraccount_list"/>
+                            </p:commandButton>
+                            <span class="ui-input-icon-left">
+                                <i class="pi pi-search" style="margin-left: 10px;"></i>
+                                <p:inputText id="globalFilter" onkeyup="PF('useraccountTable').filter()" placeholder="    Type here to search..." style="width: 250px; border-radius: 20px; padding-left: 30px;"/>
+                            </span>
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="ID" width="50" sortBy="#{account.userId}" filterBy="#{account.userId}" filterMatchMode="contains">
+                        <h:outputText value="#{account.userId}" />
+                    </p:column>
+                    <p:column headerText="Staff ID" width="100" sortBy="#{account.staffId}" filterBy="#{account.staffId}" filterMatchMode="contains">
+                        <h:outputText value="#{account.staffId}" />
+                    </p:column>
+                    <p:column headerText="Username" sortBy="#{account.username}" filterBy="#{account.username}" filterMatchMode="contains">
+                        <h:outputText value="#{account.username}" />
+                    </p:column>
+                    <p:column headerText="Role" sortBy="#{account.role}" filterBy="#{account.role}" filterMatchMode="contains">
+                        <h:outputText value="#{account.role}" styleClass="status-badge status-#{account.role.toLowerCase()}" />
+                    </p:column>
+                    <p:column headerText="Actions" width="100" style="text-align: center;" exportable="false">
+                        <p:commandButton icon="pi pi-pencil" action="#{userAccountBean.prepareEdit(account)}" 
+                                         styleClass="ui-button-success rounded-button ui-button-flat" update=":userDialogForm"
+                                         oncomplete="PF('userDialog').show();" style="margin-right: 5px;" title="Edit"/>
+                        <p:commandButton icon="pi pi-trash" action="#{userAccountBean.deleteUserAccount(account.userId)}" 
+                                         styleClass="ui-button-danger rounded-button ui-button-flat" update=":listForm"
+                                         onclick="return confirm('Are you sure you want to delete this account?');" title="Delete"/>
+                    </p:column>
                 </p:dataTable>
             </h:form>
         </p:card>
+        
+        <!-- User Account Modal Dialog (Add / Edit) -->
+        <p:dialog header="#{userAccountBean.userAccount.userId > 0 ? 'Edit User Account' : 'Add User Account'}" widgetVar="userDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="600">
+            <h:form id="userDialogForm">
+                <p:messages id="messages" showDetail="false" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+                
+                <div class="ui-fluid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    
+                    <div class="p-field" style="grid-column: 1 / -1;">
+                        <p:outputLabel for="staffId" value="Link to Staff Member" style="font-weight: 600;" />
+                        <p:selectOneMenu id="staffId" value="#{userAccountBean.userAccount.staffId}" required="true" requiredMessage="Please select a staff member">
+                            <f:selectItem itemLabel="Select Staff" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{userAccountBean.availableStaffList}" var="staff" 
+                                           itemLabel="#{staff.firstName} #{staff.lastName} (#{staff.email})" 
+                                           itemValue="#{staff.staffId}" />
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="p-field">
+                        <p:outputLabel for="role" value="Account Role" style="font-weight: 600;" />
+                        <p:selectOneMenu id="role" value="#{userAccountBean.userAccount.role}" required="true" requiredMessage="Role is required">
+                            <f:selectItem itemLabel="Select Role" itemValue="" noSelectionOption="true" />
+                            <f:selectItem itemLabel="Admin" itemValue="Admin" />
+                            <f:selectItem itemLabel="Staff" itemValue="Staff" />
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="p-field">
+                        <p:outputLabel for="username" value="Username" style="font-weight: 600;" />
+                        <p:inputText id="username" value="#{userAccountBean.userAccount.username}" required="true" requiredMessage="Username is required" />
+                    </div>
+
+                    <div class="p-field">
+                        <p:outputLabel for="password" value="Password" style="font-weight: 600;" />
+                        <p:inputText id="password" value="#{userAccountBean.newPassword}" placeholder="#{userAccountBean.userAccount.userId > 0 ? 'Leave blank to keep current' : 'Type password...'}" required="#{userAccountBean.userAccount.userId == 0}" requiredMessage="Password is required" />
+                    </div>
+
+                </div>
+
+                <div style="margin-top: 30px; text-align: right;">
+                    <p:commandButton value="Cancel" onclick="PF('userDialog').hide(); return false;" styleClass="ui-button-secondary ui-button-flat" style="margin-right: 10px;" />
+                    <p:commandButton value="Save Account" action="#{userAccountBean.saveAccount}" 
+                                     styleClass="btn-primary" icon="pi pi-check" 
+                                     update="@form :listForm" 
+                                     oncomplete="if(!args.validationFailed) PF('userDialog').hide();" />
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <!-- Open modal automatically if openAdd parameter is true -->
+        <h:outputText rendered="#{param.openAdd == 'true'}">
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    setTimeout(function() {
+                        PF('userDialog').show();
+                    }, 500);
+                });
+            </script>
+        </h:outputText>
     </ui:define>
 </ui:composition>
