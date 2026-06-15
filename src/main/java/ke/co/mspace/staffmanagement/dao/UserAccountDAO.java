@@ -78,6 +78,16 @@ public class UserAccountDAO {
         }
     }
     
+    public void deleteUserAccountByStaffId(int staffId){
+        String sql = "DELETE FROM useraccount WHERE staffId = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)){
+            stmt.setInt(1, staffId);
+            stmt.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+    
     public UserAccount getUserAccountByUsername(String username){
         UserAccount useraccount = null;
         String sql = "SELECT * FROM useraccount WHERE username  = ?";

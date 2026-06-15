@@ -11,6 +11,7 @@ import ke.co.mspace.staffmanagement.dao.RoleDAO;
 import ke.co.mspace.staffmanagement.dao.DepartmentDAO;
 import ke.co.mspace.staffmanagement.model.UserAccount;
 import ke.co.mspace.staffmanagement.dao.UserAccountDAO;
+import ke.co.mspace.staffmanagement.dao.AttendanceDAO;
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -29,6 +30,7 @@ public class StaffBean implements Serializable{
     private RoleDAO roleDAO;
     private DepartmentDAO departmentDAO;
     private UserAccountDAO userAccountDAO;
+    private AttendanceDAO attendanceDAO;
     private UserAccount userAccount = new UserAccount();
     private boolean createAccount;
     private String newPassword;
@@ -40,6 +42,7 @@ public class StaffBean implements Serializable{
             roleDAO = new RoleDAO(conn);
             departmentDAO = new DepartmentDAO(conn);
             userAccountDAO = new UserAccountDAO(conn);
+            attendanceDAO = new AttendanceDAO(conn);
             staffList = staffDAO.getAllStaff();
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,7 +61,7 @@ public class StaffBean implements Serializable{
         if (createAccount && newStaffId > 0) {
             userAccount.setStaffId(newStaffId);
             if (newPassword != null && !newPassword.trim().isEmpty()) {
-                userAccount.setPasswordHash(newPassword);
+                userAccount.setPasswordHash(ke.co.mspace.staffmanagement.util.PasswordUtil.hashPassword(newPassword));
             }
             userAccountDAO.saveUserAccount(userAccount);
         }
@@ -87,6 +90,8 @@ public class StaffBean implements Serializable{
     
     //delete staff
     public String deleteStaff(int staffId){
+        attendanceDAO.deleteAttendanceByStaffId(staffId);
+        userAccountDAO.deleteUserAccountByStaffId(staffId);
         staffDAO.deleteStaff(staffId);
         staffList = staffDAO.getAllStaff();
         return "staffList.xhtml?faces-redirect=true";

@@ -34,7 +34,7 @@ public class LoginBean implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         UserAccount user = useraccountDAO.getUserAccountByUsername(username);
 
-        if (user != null && user.getPasswordHash() != null && user.getPasswordHash().equals(password)) {
+        if (user != null && user.getPasswordHash() != null && user.getPasswordHash().equals(ke.co.mspace.staffmanagement.util.PasswordUtil.hashPassword(password))) {
             loggedInUser = user;
             ExternalContext externalContext = context.getExternalContext();
             externalContext.getSessionMap().put("loggedInUser", loggedInUser);

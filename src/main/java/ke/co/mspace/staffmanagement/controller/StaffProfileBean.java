@@ -133,7 +133,7 @@ public class StaffProfileBean implements Serializable {
             staffDAO.updateStaff(currentStaff);
             
             if (newPassword != null && !newPassword.trim().isEmpty()) {
-                currentUserAccount.setPasswordHash(newPassword);
+                currentUserAccount.setPasswordHash(ke.co.mspace.staffmanagement.util.PasswordUtil.hashPassword(newPassword));
                 userAccountDAO.updateUserAccount(currentUserAccount);
                 newPassword = null; 
             }

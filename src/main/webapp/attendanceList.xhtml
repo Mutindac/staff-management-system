@@ -12,13 +12,26 @@
         
         <p:card styleClass="premium-card">
             <h:form id="attendanceForm">
-                <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 10px;">
-                    <p:commandButton value="Export CSV" icon="pi pi-file-excel" styleClass="ui-button-success ui-button-outlined" ajax="false">
-                        <p:dataExporter type="csv" target="attendanceTable" fileName="attendance_logs" />
-                    </p:commandButton>
-                    <p:commandButton value="Export PDF" icon="pi pi-file-pdf" styleClass="ui-button-danger ui-button-outlined" ajax="false">
-                        <p:dataExporter type="pdf" target="attendanceTable" fileName="attendance_logs" />
-                    </p:commandButton>
+                <p:messages id="messages" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <p:outputLabel for="attendanceDate" value="Select Date:" style="font-weight: 600;" />
+                        <p:datePicker id="attendanceDate" value="#{attendanceBean.selectedDate}" pattern="MMM dd, yyyy" showIcon="true">
+                            <p:ajax event="dateSelect" listener="#{attendanceBean.loadAttendanceLogsForDate}" update="attendanceTable" />
+                        </p:datePicker>
+                        <p:commandButton value="Test Morning Emails" action="#{attendanceBean.testMorningReminders()}" update="@form" styleClass="ui-button-warning ui-button-outlined" />
+                        <p:commandButton value="Test Evening Emails" action="#{attendanceBean.testEveningReminders()}" update="@form" styleClass="ui-button-warning ui-button-outlined" />
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <p:commandButton value="Export CSV" icon="pi pi-file-excel" styleClass="ui-button-success ui-button-outlined" ajax="false">
+                            <p:dataExporter type="csv" target="attendanceTable" fileName="attendance_logs" />
+                        </p:commandButton>
+                        <p:commandButton value="Export PDF" icon="pi pi-file-pdf" styleClass="ui-button-danger ui-button-outlined" ajax="false">
+                            <p:dataExporter type="pdf" target="attendanceTable" fileName="attendance_logs" />
+                        </p:commandButton>
+                    </div>
                 </div>
                 
                 <p:dataTable id="attendanceTable" widgetVar="attendanceTable" value="#{attendanceBean.attendanceLogs}" var="log" paginator="true" rows="15" styleClass="ui-datatable-striped" emptyMessage="No attendance logs found">
@@ -34,22 +47,23 @@
                         <h:outputText value="#{log.checkInTime}" rendered="#{not empty log.checkInTime}">
                             <f:convertDateTime pattern="hh:mm a" timeZone="Africa/Nairobi" />
                         </h:outputText>
-                        <h:outputText value="Not Checked In" rendered="#{empty log.checkInTime}" style="color: #ef4444; font-weight: 600;" />
+                        <h:outputText value="Not Checked In" rendered="#{empty log.checkInTime}" style="color: #ef4444; font-weight: 300;" />
                     </p:column>
                     <p:column headerText="Check Out" sortBy="#{log.checkOutTime}">
                         <h:outputText value="#{log.checkOutTime}" rendered="#{not empty log.checkOutTime}">
                             <f:convertDateTime pattern="hh:mm a" timeZone="Africa/Nairobi" />
                         </h:outputText>
-                        <h:outputText value="Not Checked Out" rendered="#{empty log.checkOutTime}" style="color: #ef4444; font-weight: 600;" />
+                        <h:outputText value="Not Checked Out" rendered="#{empty log.checkOutTime}" style="color: #ef4444; font-weight: 300;" />
                     </p:column>
                     <p:column headerText="Status" sortBy="#{log.status}" filterBy="#{log.status}" filterMatchMode="exact">
                         <f:facet name="filter">
                             <p:selectOneMenu onchange="PF('attendanceTable').filter()" styleClass="ui-custom-filter" style="width:100%">
                                 <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
                                 <f:selectItem itemLabel="PRESENT" itemValue="PRESENT" />
+                                <f:selectItem itemLabel="ABSENT" itemValue="ABSENT" />
                             </p:selectOneMenu>
                         </f:facet>
-                        <p:tag severity="success" value="#{log.status}" />
+                        <p:tag severity="#{log.status eq 'PRESENT' ? 'success' : 'danger'}" value="#{log.status}" />
                     </p:column>
                 </p:dataTable>
             </h:form>

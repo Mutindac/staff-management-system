@@ -56,7 +56,7 @@ public class UserAccountBean implements Serializable{
     //save userAccount (Add or Update)
     public String saveAccount(){
         if (newPassword != null && !newPassword.trim().isEmpty()) {
-            userAccount.setPasswordHash(newPassword);
+            userAccount.setPasswordHash(ke.co.mspace.staffmanagement.util.PasswordUtil.hashPassword(newPassword));
         }
         
         if (userAccount.getUserId() > 0) {

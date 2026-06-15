@@ -81,4 +81,35 @@ public class AttendanceDAO {
         }
         return list;
     }
+    public java.util.List<Attendance> getAttendanceLogsByDate(Date workDate) {
+        java.util.List<Attendance> list = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM attendance WHERE workDate = ? ORDER BY checkInTime DESC";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setDate(1, workDate);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Attendance a = new Attendance();
+                    a.setAttendanceId(rs.getInt("attendanceId"));
+                    a.setStaffId(rs.getInt("staffId"));
+                    a.setWorkDate(rs.getDate("workDate"));
+                    a.setCheckInTime(rs.getTimestamp("checkInTime"));
+                    a.setCheckOutTime(rs.getTimestamp("checkOutTime"));
+                    a.setStatus(rs.getString("status"));
+                    list.add(a);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    public void deleteAttendanceByStaffId(int staffId) {
+        String sql = "DELETE FROM attendance WHERE staffId = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, staffId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

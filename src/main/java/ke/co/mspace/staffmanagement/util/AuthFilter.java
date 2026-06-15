@@ -38,9 +38,25 @@ public class AuthFilter implements Filter {
             UserAccount loggedInUser = (session != null) ? (UserAccount) session.getAttribute("loggedInUser") : null;
             boolean isLoggedIn = (loggedInUser != null);
 
-            if (isLoggedIn || isLoginRequest || isResourceRequest) {
-                // Let the request proceed
+            if (isLoginRequest || isResourceRequest) {
+                // Let the request proceed without authentication
                 chain.doFilter(request, response);
+            } else if (isLoggedIn) {
+                String role = loggedInUser.getRole();
+                boolean isAdminPage = requestURI.contains("staffList.xhtml") || 
+                                      requestURI.contains("departmentList.xhtml") ||
+                                      requestURI.contains("roleList.xhtml") ||
+                                      requestURI.contains("useraccountList.xhtml") ||
+                                      requestURI.contains("attendanceList.xhtml") ||
+                                      requestURI.contains("index.xhtml");
+
+                if ("Staff".equalsIgnoreCase(role) && isAdminPage) {
+                    // Redirect staff away from admin pages
+                    res.sendRedirect(req.getContextPath() + "/staffProfile.xhtml");
+                } else {
+                    // Let the request proceed
+                    chain.doFilter(request, response);
+                }
             } else {
                 // If not logged in, redirect to login page
                 res.sendRedirect(req.getContextPath() + "/login.xhtml");
