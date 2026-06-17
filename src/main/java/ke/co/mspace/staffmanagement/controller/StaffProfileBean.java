@@ -24,7 +24,10 @@ import ke.co.mspace.staffmanagement.util.DButil;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Base64;
 import java.util.stream.Collectors;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.file.UploadedFile;
 
 @Named("staffProfileBean")
 @SessionScoped
@@ -42,6 +45,9 @@ public class StaffProfileBean implements Serializable {
     private int departmentSize;
     private List<Staff> colleagues;
     private String departmentRoleChartModel;
+    
+    private java.util.Date filterStartDate;
+    private java.util.Date filterEndDate;
 
     private StaffDAO staffDAO;
     private UserAccountDAO userAccountDAO;
@@ -49,6 +55,7 @@ public class StaffProfileBean implements Serializable {
     private RoleDAO roleDAO;
     private AttendanceDAO attendanceDAO;
     private ke.co.mspace.staffmanagement.model.Attendance todayAttendance;
+    private List<ke.co.mspace.staffmanagement.model.Attendance> myAttendanceHistory;
 
     public StaffProfileBean() {
         try {
@@ -95,6 +102,7 @@ public class StaffProfileBean implements Serializable {
                 departmentSize = colleagues.size() + 1; // Including the current user
                 
                 loadTodayAttendance();
+                myAttendanceHistory = attendanceDAO.getAttendanceLogsByStaff(currentStaff.getStaffId());
                 generateRoleChart();
             }
         }
@@ -146,6 +154,34 @@ public class StaffProfileBean implements Serializable {
             e.printStackTrace();
         }
     }
+    
+    public void handleImageUpload(FileUploadEvent event) {
+        try {
+            UploadedFile file = event.getFile();
+            if (file != null && file.getContent() != null && file.getContent().length > 0) {
+                byte[] bytes = file.getContent();
+                String base64Image = Base64.getEncoder().encodeToString(bytes);
+                currentUserAccount.setProfileImage(base64Image);
+                userAccountDAO.updateUserAccount(currentUserAccount);
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Profile image updated successfully."));
+            }
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to upload image."));
+            e.printStackTrace();
+        }
+    }
+    
+    public void filterAttendanceHistory() {
+        if (currentStaff != null) {
+            if (filterStartDate != null && filterEndDate != null) {
+                myAttendanceHistory = attendanceDAO.getAttendanceLogsByStaffAndDateRange(currentStaff.getStaffId(), filterStartDate, filterEndDate);
+            } else {
+                myAttendanceHistory = attendanceDAO.getAttendanceLogsByStaff(currentStaff.getStaffId());
+            }
+        }
+    }
 
     // Getters and Setters
     public Staff getCurrentStaff() { return currentStaff; }
@@ -165,8 +201,17 @@ public class StaffProfileBean implements Serializable {
     public List<Staff> getColleagues() { return colleagues; }
     public String getDepartmentRoleChartModel() { return departmentRoleChartModel; }
     
+    public java.util.Date getFilterStartDate() { return filterStartDate; }
+    public void setFilterStartDate(java.util.Date filterStartDate) { this.filterStartDate = filterStartDate; }
+    
+    public java.util.Date getFilterEndDate() { return filterEndDate; }
+    public void setFilterEndDate(java.util.Date filterEndDate) { this.filterEndDate = filterEndDate; }
+    
     public ke.co.mspace.staffmanagement.model.Attendance getTodayAttendance() { return todayAttendance; }
     public void setTodayAttendance(ke.co.mspace.staffmanagement.model.Attendance todayAttendance) { this.todayAttendance = todayAttendance; }
+    
+    public List<ke.co.mspace.staffmanagement.model.Attendance> getMyAttendanceHistory() { return myAttendanceHistory; }
+    public void setMyAttendanceHistory(List<ke.co.mspace.staffmanagement.model.Attendance> myAttendanceHistory) { this.myAttendanceHistory = myAttendanceHistory; }
     
     public String getRoleTitleForStaff(Staff staff) {
         Role r = roleDAO.getRoleById(staff.getRoleId());

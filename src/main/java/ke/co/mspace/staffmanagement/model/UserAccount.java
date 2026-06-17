@@ -16,6 +16,7 @@ public class UserAccount implements Serializable{
     private String username;
     private String passwordHash;
     private String role;
+    private String profileImage;
     
     //default constructor
     public UserAccount(){
@@ -23,12 +24,13 @@ public class UserAccount implements Serializable{
     }
     
     //parameterized constructor
-    public UserAccount(int userId,int staffId, String username, String passwordHash, String role){
+    public UserAccount(int userId,int staffId, String username, String passwordHash, String role, String profileImage){
         this.userId = userId;
         this.staffId = staffId;
         this.username = username;
         this.passwordHash = passwordHash;
         this.role = role;
+        this.profileImage = profileImage;
     }
     
     //getters and setters
@@ -67,6 +69,13 @@ public class UserAccount implements Serializable{
         this.role = role;
     }
     
+    public String getProfileImage(){
+        return profileImage;
+    }
+    public void setProfileImage(String profileImage){
+        this.profileImage = profileImage;
+    }
+    
     @Override
     public String toString(){
         return "userAccount{" + userId +
@@ -74,6 +83,7 @@ public class UserAccount implements Serializable{
                 " ,username=" + username +
                 " ,passwordHash=" + passwordHash +
                 " ,role=" + role +
+                " ,profileImage=" + profileImage +
                 "}";
     }
 }

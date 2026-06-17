@@ -9,7 +9,7 @@
 
     <ui:define name="content">
         <p:card styleClass="premium-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 class="page-title" style="margin: 0;">Roles</h2>
                 <h:form style="margin:0;">
                     <p:commandButton value="Add Role" action="#{roleBean.prepareAddRole}" oncomplete="PF('addRoleDialog').show()" update="addRoleForm" styleClass="btn-primary" icon="pi pi-plus" style="margin-top: 0 !important; padding: 5px 12px !important; font-size: 0.85rem !important;" />
@@ -17,10 +17,10 @@
             </div>
             
             <h:form id="listForm">
-                <p:dataTable id="roleTable" widgetVar="roleTable" value="#{roleBean.roleList}" var="s" paginator="true" rows="10" reflow="true" styleClass="ui-datatable-striped" emptyMessage="No roles found">
+                <p:dataTable id="roleTable" widgetVar="roleTable" value="#{roleBean.roleList}" var="s" paginator="true" rows="10" styleClass="ui-datatable-striped" emptyMessage="No roles found">
                     
                     <f:facet name="header">
-                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
                             <p:commandButton value="Export CSV" icon="pi pi-file-excel" styleClass="ui-button-success ui-button-outlined" ajax="false">
                                 <p:dataExporter type="csv" target="roleTable" fileName="role_list"/>
                             </p:commandButton>
@@ -52,9 +52,8 @@
         </p:card>
 
         <!-- Add Role Dialog -->
-        <p:dialog header="Add Role" widgetVar="addRoleDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500" responsive="true" fitViewport="true">
+        <p:dialog header="Add Role" widgetVar="addRoleDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500">
             <h:form id="addRoleForm">
-                <div style="max-height: 80vh; overflow-y: auto; overflow-x: hidden; padding: 10px;">
                 <p:messages id="messages" showDetail="false" closable="true"><p:autoUpdate/></p:messages>
                 
                 <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid form-grid" columnClasses="ui-grid-col-4, ui-grid-col-8"> 
@@ -71,14 +70,12 @@
                         <p:resetInput target="addRoleForm" />
                     </p:commandButton>
                 </div>
-                </div>
             </h:form>
         </p:dialog>
         
         <!-- Update Role Dialog -->
-        <p:dialog header="Update Role" widgetVar="updateRoleDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500" responsive="true" fitViewport="true">
+        <p:dialog header="Update Role" widgetVar="updateRoleDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500">
             <h:form id="updateRoleForm">
-                <div style="max-height: 80vh; overflow-y: auto; overflow-x: hidden; padding: 10px;">
                 <p:messages id="updateMessages" showDetail="false" closable="true"><p:autoUpdate/></p:messages>
                 
                 <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid form-grid" columnClasses="ui-grid-col-4, ui-grid-col-8"> 
@@ -92,7 +89,6 @@
                 <div style="margin-top: 20px; text-align: right;">
                     <p:commandButton value="Cancel" type="button" styleClass="ui-button-secondary" onclick="PF('updateRoleDialog').hide()" style="margin-right: 10px;" />
                     <p:commandButton value="Save Changes" styleClass="btn-primary" action="#{roleBean.updateRole(roleBean.role)}" update="listForm @form" oncomplete="if (!args.validationFailed) PF('updateRoleDialog').hide()" icon="pi pi-save" />
-                </div>
                 </div>
             </h:form>
         </p:dialog>

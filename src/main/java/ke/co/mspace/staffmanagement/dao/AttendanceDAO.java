@@ -103,6 +103,55 @@ public class AttendanceDAO {
         }
         return list;
     }
+    
+    public java.util.List<Attendance> getAttendanceLogsByStaff(int staffId) {
+        java.util.List<Attendance> list = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM attendance WHERE staffId = ? ORDER BY workDate DESC, checkInTime DESC";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, staffId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Attendance a = new Attendance();
+                    a.setAttendanceId(rs.getInt("attendanceId"));
+                    a.setStaffId(rs.getInt("staffId"));
+                    a.setWorkDate(rs.getDate("workDate"));
+                    a.setCheckInTime(rs.getTimestamp("checkInTime"));
+                    a.setCheckOutTime(rs.getTimestamp("checkOutTime"));
+                    a.setStatus(rs.getString("status"));
+                    list.add(a);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    public java.util.List<Attendance> getAttendanceLogsByStaffAndDateRange(int staffId, java.util.Date startDate, java.util.Date endDate) {
+        java.util.List<Attendance> list = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM attendance WHERE staffId = ? AND workDate >= ? AND workDate <= ? ORDER BY workDate DESC, checkInTime DESC";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, staffId);
+            stmt.setDate(2, new java.sql.Date(startDate.getTime()));
+            stmt.setDate(3, new java.sql.Date(endDate.getTime()));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Attendance a = new Attendance();
+                    a.setAttendanceId(rs.getInt("attendanceId"));
+                    a.setStaffId(rs.getInt("staffId"));
+                    a.setWorkDate(rs.getDate("workDate"));
+                    a.setCheckInTime(rs.getTimestamp("checkInTime"));
+                    a.setCheckOutTime(rs.getTimestamp("checkOutTime"));
+                    a.setStatus(rs.getString("status"));
+                    list.add(a);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public void deleteAttendanceByStaffId(int staffId) {
         String sql = "DELETE FROM attendance WHERE staffId = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

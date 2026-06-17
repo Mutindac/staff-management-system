@@ -17,12 +17,13 @@ public class UserAccountDAO {
     }
     
     public void saveUserAccount(UserAccount userAccount){
-        String sql = "INSERT INTO useraccount(staffId,username,passwordHash,role) VALUES(?,?,?,?)";
+        String sql = "INSERT INTO useraccount(staffId,username,passwordHash,role,profileImage) VALUES(?,?,?,?,?)";
         try(PreparedStatement stmt = connection.prepareStatement(sql)){
             stmt.setInt(1, userAccount.getStaffId());
             stmt.setString(2, userAccount.getUsername());
             stmt.setString(3, userAccount.getPasswordHash());
             stmt.setString(4, userAccount.getRole());
+            stmt.setString(5, userAccount.getProfileImage());
             stmt.executeUpdate();
         } catch(SQLException e){
             e.printStackTrace();
@@ -36,6 +37,7 @@ public class UserAccountDAO {
         useraccount.setUsername(rs.getString("username"));
         useraccount.setPasswordHash(rs.getString("passwordHash"));
         useraccount.setRole(rs.getString("role"));
+        useraccount.setProfileImage(rs.getString("profileImage"));
         return useraccount;
     }
     
@@ -55,13 +57,14 @@ public class UserAccountDAO {
     }
     
     public void updateUserAccount(UserAccount useraccount){
-        String sql = "UPDATE useraccount SET staffId = ?, username = ?, passwordHash = ?, role = ? WHERE userId = ?";
+        String sql = "UPDATE useraccount SET staffId = ?, username = ?, passwordHash = ?, role = ?, profileImage = ? WHERE userId = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)){
             stmt.setInt(1, useraccount.getStaffId());
             stmt.setString(2, useraccount.getUsername());
             stmt.setString(3, useraccount.getPasswordHash());
             stmt.setString(4, useraccount.getRole());
-            stmt.setInt(5, useraccount.getUserId());
+            stmt.setString(5, useraccount.getProfileImage());
+            stmt.setInt(6, useraccount.getUserId());
             stmt.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -93,6 +96,21 @@ public class UserAccountDAO {
         String sql = "SELECT * FROM useraccount WHERE username  = ?";
         try(PreparedStatement stmt  = connection.prepareStatement(sql)){
             stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                useraccount = mapRowToUserAccount(rs);
+            }
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+        return useraccount;
+    }
+    
+    public UserAccount getUserAccountByStaffId(int staffId){
+        UserAccount useraccount = null;
+        String sql = "SELECT * FROM useraccount WHERE staffId = ?";
+        try(PreparedStatement stmt  = connection.prepareStatement(sql)){
+            stmt.setInt(1, staffId);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
                 useraccount = mapRowToUserAccount(rs);

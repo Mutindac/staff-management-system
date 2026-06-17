@@ -1,0 +1,66 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="template.xhtml">
+
+    <ui:define name="title">Manage Leave Requests</ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:messages id="messages" showDetail="false" closable="true">
+                <p:autoUpdate />
+            </p:messages>
+
+            <div class="card premium-card">
+                <div class="flex justify-content-between align-items-center mb-4" style="flex-wrap: wrap; gap: 10px;">
+                    <h2 class="m-0"><i class="pi pi-envelope mr-2 text-primary"></i> Leave Requests</h2>
+                </div>
+
+                <p:dataTable id="dt-leaves" widgetVar="dtLeaves" var="leave" value="#{leaveRequestBean.allLeaveRequests}"
+                             reflow="true" styleClass="products-table"
+                             rowKey="#{leave.leaveId}" paginator="true" rows="10" paginatorPosition="bottom"
+                             emptyMessage="No leave requests found.">
+
+                    <p:column headerText="ID" sortBy="#{leave.leaveId}" filterBy="#{leave.leaveId}" style="width:80px; text-align:center;">
+                        <h:outputText value="LR-#{leave.leaveId}" />
+                    </p:column>
+
+                    <p:column headerText="Staff Member" sortBy="#{leave.staffId}" filterBy="#{leave.staffId}">
+                        <h:outputText value="#{leaveRequestBean.getStaffName(leave.staffId)}" style="font-weight: 500;" />
+                        <br/>
+                        <h:outputText value="ID: #{leave.staffId}" style="font-size: 0.85rem; color: #64748b;" />
+                    </p:column>
+
+                    <p:column headerText="Start Date" sortBy="#{leave.startDate}">
+                        <h:outputText value="#{leave.startDate}">
+                            <f:convertDateTime pattern="dd MMM yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="End Date" sortBy="#{leave.endDate}">
+                        <h:outputText value="#{leave.endDate}">
+                            <f:convertDateTime pattern="dd MMM yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Reason">
+                        <h:outputText value="#{leave.reason}" />
+                    </p:column>
+
+                    <p:column headerText="Status" sortBy="#{leave.status}" filterBy="#{leave.status}" style="width: 150px;">
+                        <p:tag severity="#{leave.status == 'APPROVED' ? 'success' : (leave.status == 'DECLINED' ? 'danger' : 'warning')}" value="#{leave.status}" style="width:100%; text-align:center; padding: 5px;" />
+                    </p:column>
+
+                    <p:column headerText="Actions" style="width: 150px; text-align: center;">
+                        <p:commandButton icon="pi pi-check" styleClass="rounded-button ui-button-success mr-2" action="#{leaveRequestBean.approveLeave(leave)}" update=":form:dt-leaves" title="Approve" disabled="#{leave.status != 'PENDING'}" style="margin-right: 5px;" />
+                        <p:commandButton icon="pi pi-times" styleClass="rounded-button ui-button-danger" action="#{leaveRequestBean.declineLeave(leave)}" update=":form:dt-leaves" title="Decline" disabled="#{leave.status != 'PENDING'}" />
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -9,15 +9,15 @@
 
     <ui:define name="content">
         <p:card styleClass="premium-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 class="page-title" style="margin: 0;">User Accounts</h2>
 
             </div>
             <h:form id="listForm">
-                <p:dataTable id="useraccountTable" widgetVar="useraccountTable" value="#{userAccountBean.useraccountList}" var="account" emptyMessage="No user accounts found." styleClass="ui-datatable-striped" paginator="true" rows="10" reflow="true">
+                <p:dataTable id="useraccountTable" widgetVar="useraccountTable" value="#{userAccountBean.useraccountList}" var="account" emptyMessage="No user accounts found." styleClass="ui-datatable-striped" paginator="true" rows="10">
                     
                     <f:facet name="header">
-                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
                             <p:commandButton value="Export CSV" icon="pi pi-file-excel" styleClass="ui-button-success ui-button-outlined" ajax="false">
                                 <p:dataExporter type="csv" target="useraccountTable" fileName="useraccount_list"/>
                             </p:commandButton>
@@ -56,9 +56,8 @@
         </p:card>
         
         <!-- User Account Modal Dialog (Add / Edit) -->
-        <p:dialog header="# {userAccountBean.userAccount.userId > 0 ? 'Edit User Account' : 'Add User Account'}" widgetVar="userDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="600" responsive="true" fitViewport="true">
+        <p:dialog header="#{userAccountBean.userAccount.userId > 0 ? 'Edit User Account' : 'Add User Account'}" widgetVar="userDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="600">
             <h:form id="userDialogForm">
-                <div style="max-height: 80vh; overflow-y: auto; overflow-x: hidden; padding: 10px;">
                 <p:messages id="messages" showDetail="false" closable="true">
                     <p:autoUpdate/>
                 </p:messages>
@@ -91,7 +90,7 @@
 
                     <div class="p-field">
                         <p:outputLabel for="password" value="Password" style="font-weight: 600;" />
-                        <p:inputText id="password" value="#{userAccountBean.newPassword}" placeholder="# {userAccountBean.userAccount.userId > 0 ? 'Leave blank to keep current' : 'Type password...'}" required="# {userAccountBean.userAccount.userId == 0}" requiredMessage="Password is required" />
+                        <p:inputText id="password" value="#{userAccountBean.newPassword}" placeholder="#{userAccountBean.userAccount.userId > 0 ? 'Leave blank to keep current' : 'Type password...'}" required="# {userAccountBean.userAccount.userId == 0}" requiredMessage="Password is required" />
                     </div>
 
                 </div>
@@ -102,7 +101,6 @@
                                      styleClass="btn-primary" icon="pi pi-check" 
                                      update="@form :listForm" 
                                      oncomplete="if(!args.validationFailed) PF('userDialog').hide();" />
-                </div>
                 </div>
             </h:form>
         </p:dialog>

@@ -175,5 +175,6 @@ public class StaffBean implements Serializable{
     //method for navigation to the details page when view button is clicked
     public void prepareViewStaff(Staff staff){
         this.staff = staff;
+        this.userAccount = userAccountDAO.getUserAccountByStaffId(staff.getStaffId());
     }
 }

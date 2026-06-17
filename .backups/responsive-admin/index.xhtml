@@ -12,7 +12,7 @@
 
         <p:panelGrid columns="3" layout="grid" styleClass="ui-fluid">
             <p:card styleClass="premium-card" style="border-left: 5px solid #0f3460;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <p style="color: #888; font-size: 14px; margin: 0;">Total Staff</p>
                         <h2 style="font-size: 32px; color: #1a1a2e; margin: 5px 0;">#{dashboardBean.totalStaff}</h2>
@@ -26,7 +26,7 @@
             </p:card>    
 
             <p:card styleClass="premium-card" style="border-left: 5px solid #e94560;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <p style="color: #888; font-size: 14px; margin: 0;">Staff Roles</p>
                         <h2 style="font-size: 32px; color: #1a1a2e; margin: 5px 0;">#{dashboardBean.allRoles}</h2>
@@ -36,7 +36,7 @@
             </p:card>
 
             <p:card styleClass="premium-card" style="border-left: 5px solid #11998e;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <p style="color: #888; font-size: 14px; margin: 0;">Departments</p>
                         <h2 style="font-size: 32px; color: #1a1a2e; margin: 5px 0;">#{dashboardBean.allDepartments}</h2>
@@ -47,7 +47,7 @@
         </p:panelGrid>
 
         <!-- Charts Section -->
-        <div style="display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 20px; margin-top: 20px;">
             <!-- Department Donut Chart -->
             <p:card styleClass="premium-card" style="flex: 1; min-width: 0;">
                 <h3 style="margin-top: 0; margin-bottom: 5px; color: #1a1a2e; font-size: 16px;">Staff by department</h3>
@@ -79,10 +79,10 @@
         <p:card styleClass="premium-card" style="margin-top: 20px;">
             <h3 style="margin-top:0; color:#1a1a2e;">Recent Staff</h3>
             <h:form id="recentStaffForm">
-                <p:dataTable widgetVar="recentStaffTable" value="#{staffBean.staffList}" var="s" paginator="true" rows="5" reflow="true" styleClass="ui-datatable-striped" emptyMessage="No staff found with given criteria">
+                <p:dataTable widgetVar="recentStaffTable" value="#{staffBean.staffList}" var="s" paginator="true" rows="5" styleClass="ui-datatable-striped" emptyMessage="No staff found with given criteria">
                     
                     <f:facet name="header">
-                        <div style="display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap;">
+                        <div style="display: flex; justify-content: flex-end; align-items: center;">
                             <span class="ui-input-icon-left">
                                 <i class="pi pi-search" style="margin-left: 10px;"></i>
                                 <p:inputText id="globalFilter" onkeyup="PF('recentStaffTable').filter()" placeholder="    Type here to search..." style="width: 250px; border-radius: 20px; padding-left: 30px;"/>
@@ -124,10 +124,9 @@
         </p:card>
 
         <!-- View Staff Dialog -->
-        <p:dialog id="viewStaffDialog" header="Staff Details" widgetVar="viewStaffDialog" modal="true" responsive="true" fitViewport="true" showEffect="fade" hideEffect="fade" resizable="false" width="500">
+        <p:dialog id="viewStaffDialog" header="Staff Details" widgetVar="viewStaffDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500">
             <p:outputPanel id="staffDetail">
-                <div style="max-height: 80vh; overflow-y: auto; overflow-x: hidden;">
-                <div style="display: flex; align-items: flex-start; gap: 20px; padding: 10px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: flex-start; gap: 20px; padding: 10px;">
                     <div style="background: linear-gradient(135deg, #0f3460, #e94560); color: white; width: 80px; height: 80px; border-radius: 40px; display: flex; justify-content: center; align-items: center; font-size: 32px; font-weight: 700;">
                         <h:outputText value="#{staffBean.staff.firstName.substring(0,1)}#{staffBean.staff.lastName.substring(0,1)}" rendered="#{not empty staffBean.staff.firstName and not empty staffBean.staff.lastName}" />
                     </div>
@@ -155,7 +154,6 @@
                             </h:outputText>
                         </p:panelGrid>
                     </div>
-                </div>
                 </div>
             </p:outputPanel>
         </p:dialog>
