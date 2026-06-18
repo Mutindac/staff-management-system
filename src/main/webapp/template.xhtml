@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core"
-      xmlns:ui="jakarta.faces.facelets"
-      xmlns:p="primefaces">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets" xmlns:p="primefaces">
 <h:head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title><ui:insert name="title">Staff Management Admin</ui:insert></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        <ui:insert name="title">Staff Management Admin</ui:insert>
+    </title>
     <h:outputStylesheet library="css" name="style.css" />
-    <ui:insert name="head"/>
+    <ui:insert name="head" />
 </h:head>
 <h:body>
     <div class="layout-wrapper">
         <!-- Topbar -->
         <div class="layout-topbar">
             <div style="display: flex; align-items: center;">
-                <a href="#" id="menu-button" class="menu-button" style="display: none; color: var(--text-primary); margin-right: 15px; font-size: 1.5rem; text-decoration: none;">
+                <a href="#" id="menu-button" class="menu-button"
+                    style="display: none; color: var(--text-primary); margin-right: 15px; font-size: 1.5rem; text-decoration: none;">
                     <i class="pi pi-bars"></i>
                 </a>
                 <div class="topbar-logo">
@@ -24,9 +24,11 @@
                 </div>
             </div>
             <div class="topbar-user">
-                <span><i class="pi pi-user" style="margin-right: 5px;"></i> Welcome, #{loginBean.loggedInUser != null ? loginBean.loggedInUser.username : 'Admin'}</span>
+                <span><i class="pi pi-user" style="margin-right: 5px;"></i> Welcome, #{loginBean.loggedInUser != null ?
+                    loginBean.loggedInUser.username : 'Admin'}</span>
                 <h:form style="margin:0;">
-                    <p:commandButton value="Logout" action="#{loginBean.logout}" icon="pi pi-power-off" styleClass="ui-button-danger rounded-button ui-button-flat"/>
+                    <p:commandButton value="Logout" action="#{loginBean.logout}" icon="pi pi-power-off"
+                        styleClass="ui-button-danger rounded-button ui-button-flat" />
                 </h:form>
             </div>
         </div>
@@ -35,31 +37,32 @@
             <!-- Sidebar -->
             <div class="layout-sidebar">
                 <h:form>
-                    <p:menu toggleable="true" styleClass="my-sidebar-menu" style="width:100%; border:none; background:transparent;">
-                        <p:menuitem value="Dashboard" outcome="index.xhtml" icon="pi pi-home"/>
-                        
-                        <p:submenu label="Staff" icon="pi pi-shield">
-                            <p:menuitem value="View Staff" outcome="staffList.xhtml" icon="pi pi-list"/>
-                        </p:submenu>
-                        
-                        <p:submenu label="Departments" icon="pi pi-shield">
-                            <p:menuitem value="View Departments" outcome="departmentList.xhtml" icon="pi pi-list"/>
-                        </p:submenu>
-                        
-                        <p:submenu label="Roles" icon="pi pi-shield">
-                            <p:menuitem value="View Roles" outcome="roleList.xhtml" icon="pi pi-list"/>
-                        </p:submenu>
-                        
-                        <p:submenu label="Accounts" icon="pi pi-shield">
-                            <p:menuitem value="User Accounts" outcome="useraccountList.xhtml" icon="pi pi-shield"/>
-                            <p:menuitem value="Attendance Logs" outcome="attendanceList.xhtml" icon="pi pi-calendar-times"/>
-                            <p:menuitem value="Leave Requests" outcome="leaveRequests.xhtml" icon="pi pi-envelope"/>
+                    <p:menu toggleable="true" styleClass="my-sidebar-menu"
+                        style="width:100%; border:none; background:transparent;">
+                        <p:menuitem value="Dashboard" outcome="index.xhtml" icon="pi pi-home" />
+
+                        <p:menuitem value="Staff" outcome="staffList.xhtml" icon="pi pi-users" />
+
+                        <p:menuitem value="Departments" outcome="departmentList.xhtml" icon="pi pi-building" />
+
+                        <p:menuitem value="Roles" outcome="roleList.xhtml" icon="pi pi-id-card" />
+
+                        <p:submenu label="⚙ Accounts">
+
+                            <p:menuitem value="User Accounts" outcome="useraccountList.xhtml" icon="pi pi-user" />
+
+                            <p:menuitem value="Attendance Logs" outcome="attendanceList.xhtml"
+                                icon="pi pi-calendar-times" />
+
+                            <p:menuitem value="Leave Requests" outcome="leaveRequests.xhtml" icon="pi pi-envelope" />
+
                         </p:submenu>
                     </p:menu>
-                    
+
                     <!-- Inject icons into submenu headers and fix colors -->
                     <h:outputScript>
-                        //<![CDATA[
+                        //
+                        <![CDATA[
                         $(document).ready(function() {
                             $('#menu-button').on('click', function(e) {
                                 e.preventDefault();
@@ -114,8 +117,12 @@
 
         <!-- Footer -->
         <div class="layout-footer">
-            Staff Management System © 2026.@Mspace All rights reserved.
+            Staff Management System © <span id="year "></span> Mspace All rights reserved.
         </div>
+        <script>
+            document.getElementById("year").textContent = new Date().getFullYear();
+        </script>
     </div>
 </h:body>
+
 </html>

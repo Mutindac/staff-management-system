@@ -30,7 +30,7 @@ body {
     height: var(--topbar-height);
     flex-shrink: 0;
     background: linear-gradient(90deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -66,7 +66,7 @@ body {
     color: var(--text-light);
     height: 100%;
     z-index: 999;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -87,7 +87,7 @@ body {
 
 /* Submenu Headers */
 .layout-sidebar .ui-menu .ui-widget-header {
-    background: rgba(0,0,0,0.02) !important;
+    background: rgba(0, 0, 0, 0.02) !important;
     color: #334155 !important;
     padding: 12px 20px !important;
     margin-top: 5px;
@@ -103,9 +103,9 @@ body {
 .layout-sidebar .ui-menu .ui-widget-header .ui-icon-triangle-1-s,
 .layout-sidebar .ui-menu .ui-widget-header .ui-icon-triangle-1-e,
 .layout-sidebar .ui-menu .ui-widget-header .ui-submenu-icon,
-.layout-sidebar .ui-menu-parent > a > .ui-submenu-icon,
-.layout-sidebar .ui-menu-parent > a > .ui-icon-triangle-1-e,
-.layout-sidebar .ui-menu-parent > a > .ui-icon-triangle-1-s {
+.layout-sidebar .ui-menu-parent>a>.ui-submenu-icon,
+.layout-sidebar .ui-menu-parent>a>.ui-icon-triangle-1-e,
+.layout-sidebar .ui-menu-parent>a>.ui-icon-triangle-1-s {
     display: none !important;
 }
 
@@ -117,15 +117,15 @@ body {
     background: transparent !important;
 }
 
-.layout-sidebar .ui-menu-parent > a {
+.layout-sidebar .ui-menu-parent>a {
     color: #334155 !important;
-    background: rgba(0,0,0,0.02) !important;
+    background: rgba(0, 0, 0, 0.02) !important;
     font-weight: 600 !important;
     border-bottom: 1px solid #e2e8f0;
 }
 
 .layout-sidebar .ui-menu .ui-menuitem-link:hover {
-    background: rgba(0,0,0,0.05) !important;
+    background: rgba(0, 0, 0, 0.05) !important;
     color: #0f172a !important;
 }
 
@@ -138,6 +138,7 @@ body {
 .layout-sidebar .ui-menu .ui-menuitem-text {
     color: #475569 !important;
 }
+
 .layout-sidebar .ui-menu .ui-menuitem-link:hover .ui-menuitem-text {
     color: #0f172a !important;
 }
@@ -177,7 +178,7 @@ body {
 .premium-card {
     background: #fff;
     border-radius: 12px !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03) !important;
     border: none !important;
     padding: 20px;
     margin-bottom: 20px;
@@ -187,7 +188,7 @@ body {
 
 .premium-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
 }
 
 .page-title {
@@ -202,12 +203,15 @@ body {
 .form-grid {
     margin-top: 15px;
 }
-.ui-fluid .ui-inputtext, .ui-fluid .ui-selectonemenu {
+
+.ui-fluid .ui-inputtext,
+.ui-fluid .ui-selectonemenu {
     padding: 8px;
     border-radius: 6px;
     border: 1px solid #ddd;
     width: 100%;
 }
+
 .ui-fluid .ui-outputlabel {
     font-weight: 600;
     margin-bottom: 5px;
@@ -231,12 +235,21 @@ body {
     background: linear-gradient(90deg, #16213e, #1a1a2e) !important;
 }
 
+/* Add icon only to Accounts submenu header */
+.my-sidebar-menu .ui-submenu .ui-submenu-label::before {
+    font-family: "primeicons";
+    content: "\e94b";
+    /* pi-cog */
+    margin-right: 10px;
+    color: #e94560;
+}
+
 /* Mobile Responsive */
 @media screen and (max-width: 768px) {
     .menu-button {
         display: block !important;
     }
-    
+
     .layout-sidebar {
         position: fixed;
         left: -var(--sidebar-width);
@@ -244,25 +257,26 @@ body {
         height: calc(100vh - var(--topbar-height));
         transition: left 0.3s ease;
         z-index: 1000;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
     }
-    
+
     .layout-sidebar.active {
         left: 0;
     }
-    
+
     .topbar-user span {
-        display: none; /* Hide welcome text on mobile to save space */
+        display: none;
+        /* Hide welcome text on mobile to save space */
     }
-    
+
     .layout-topbar {
         padding: 0 15px;
     }
-    
+
     .layout-content {
         padding: 10px;
     }
-    
+
     .premium-card {
         padding: 15px;
     }
