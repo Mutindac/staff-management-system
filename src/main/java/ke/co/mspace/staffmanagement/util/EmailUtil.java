@@ -8,12 +8,30 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class EmailUtil {
 
-    private static final String SENDER_EMAIL = "bazu7642@gmail.com";
-    private static final String APP_PASSWORD = "robz ijfk dibr fhaz";
+    private static final String SENDER_EMAIL;
+    private static final String APP_PASSWORD;
+
+    static {
+        String email = "bazu7642@gmail.com";
+        String password = "robz ijfk dibr fhaz";
+        try (InputStream is = EmailUtil.class.getClassLoader().getResourceAsStream("email.properties")) {
+            if (is != null) {
+                Properties p = new Properties();
+                p.load(is);
+                email = p.getProperty("mail.sender.email", email);
+                password = p.getProperty("mail.sender.password", password);
+            }
+        } catch (Exception e) {
+            System.err.println("Could not load email.properties, using defaults: " + e.getMessage());
+        }
+        SENDER_EMAIL = email;
+        APP_PASSWORD = password;
+    }
 
     public static void sendReminderEmail(String recipientEmail, String subject, String messageText) {
         if (recipientEmail == null || recipientEmail.isEmpty()) {

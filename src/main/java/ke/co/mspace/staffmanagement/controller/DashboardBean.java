@@ -27,26 +27,25 @@ import ke.co.mspace.staffmanagement.model.Role;
 @Named("dashboardBean")
 @SessionScoped
 public class DashboardBean implements Serializable{
-    private StaffDAO staffDAO;
-    private DepartmentDAO departmentDAO;
-    private RoleDAO roleDAO;
     
     private String departmentChartModel;
     private String statusChartModel;
     private String roleChartModel;
     
     public DashboardBean(){
-        try{
-            //database connection
-            Connection conn = DButil.getConnection();
-            roleDAO = new RoleDAO(conn);
-            departmentDAO = new DepartmentDAO(conn);
-            staffDAO = new StaffDAO(conn);
-            
-            initCharts();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        initCharts();
+    }
+    
+    private StaffDAO getStaffDAO() throws Exception {
+        return new StaffDAO(DButil.getConnection());
+    }
+    
+    private DepartmentDAO getDepartmentDAO() throws Exception {
+        return new DepartmentDAO(DButil.getConnection());
+    }
+    
+    private RoleDAO getRoleDAO() throws Exception {
+        return new RoleDAO(DButil.getConnection());
     }
     
     private void initCharts() {
@@ -58,53 +57,60 @@ public class DashboardBean implements Serializable{
     private void createDepartmentChart() {
         String[] colors = {"#3b82f6", "#e94560", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"};
         Map<Integer, Integer> deptCounts = new HashMap<>();
-        for (Staff s : staffDAO.getAllStaff()) {
-            if (s.getDepartmentId() > 0) {
-                deptCounts.put(s.getDepartmentId(), deptCounts.getOrDefault(s.getDepartmentId(), 0) + 1);
-            }
-        }
-        
-        StringBuilder labels = new StringBuilder("[");
-        StringBuilder data = new StringBuilder("[");
-        StringBuilder bgColors = new StringBuilder("[");
-        
-        int colorIdx = 0;
-        boolean first = true;
-        for (Map.Entry<Integer, Integer> entry : deptCounts.entrySet()) {
-            Department d = departmentDAO.getDepartmentById(entry.getKey());
-            if (d != null) {
-                if (!first) {
-                    labels.append(",");
-                    data.append(",");
-                    bgColors.append(",");
+        try {
+            StaffDAO staffDAO = getStaffDAO();
+            DepartmentDAO departmentDAO = getDepartmentDAO();
+            for (Staff s : staffDAO.getAllStaff()) {
+                if (s.getDepartmentId() > 0) {
+                    deptCounts.put(s.getDepartmentId(), deptCounts.getOrDefault(s.getDepartmentId(), 0) + 1);
                 }
-                labels.append("\"").append(d.getName().replace("\"", "\\\"")).append("\"");
-                data.append(entry.getValue());
-                bgColors.append("\"").append(colors[colorIdx % colors.length]).append("\"");
-                first = false;
-                colorIdx++;
             }
-        }
-        labels.append("]");
-        data.append("]");
-        bgColors.append("]");
         
-        departmentChartModel = "{"
-            + "\"type\": \"doughnut\","
-            + "\"data\": {"
-            + "  \"labels\": " + labels.toString() + ","
-            + "  \"datasets\": [{"
-            + "    \"data\": " + data.toString() + ","
-            + "    \"backgroundColor\": " + bgColors.toString()
-            + "  }]"
-            + "},"
-            + "\"options\": {"
-            + "  \"maintainAspectRatio\": false,"
-            + "  \"plugins\": {"
-            + "    \"legend\": {\"position\": \"bottom\"}"
-            + "  }"
-            + "}"
-            + "}";
+            StringBuilder labels = new StringBuilder("[");
+            StringBuilder data = new StringBuilder("[");
+            StringBuilder bgColors = new StringBuilder("[");
+            
+            int colorIdx = 0;
+            boolean first = true;
+            for (Map.Entry<Integer, Integer> entry : deptCounts.entrySet()) {
+                Department d = departmentDAO.getDepartmentById(entry.getKey());
+                if (d != null) {
+                    if (!first) {
+                        labels.append(",");
+                        data.append(",");
+                        bgColors.append(",");
+                    }
+                    labels.append("\"").append(d.getName().replace("\"", "\\\"")).append("\"");
+                    data.append(entry.getValue());
+                    bgColors.append("\"").append(colors[colorIdx % colors.length]).append("\"");
+                    first = false;
+                    colorIdx++;
+                }
+            }
+            labels.append("]");
+            data.append("]");
+            bgColors.append("]");
+            
+            departmentChartModel = "{"
+                + "\"type\": \"doughnut\","
+                + "\"data\": {"
+                + "  \"labels\": " + labels.toString() + ","
+                + "  \"datasets\": [{"
+                + "    \"data\": " + data.toString() + ","
+                + "    \"backgroundColor\": " + bgColors.toString()
+                + "  }]"
+                + "},"
+                + "\"options\": {"
+                + "  \"maintainAspectRatio\": false,"
+                + "  \"plugins\": {"
+                + "    \"legend\": {\"position\": \"bottom\"}"
+                + "  }"
+                + "}"
+                + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
     }
     
     private void createStatusChart() {
@@ -130,95 +136,128 @@ public class DashboardBean implements Serializable{
     
     private void createRoleChart() {
         Map<Integer, Integer> roleCounts = new HashMap<>();
-        for (Staff s : staffDAO.getAllStaff()) {
-            if (s.getRoleId() > 0) {
-                roleCounts.put(s.getRoleId(), roleCounts.getOrDefault(s.getRoleId(), 0) + 1);
-            }
-        }
-        
-        StringBuilder labels = new StringBuilder("[");
-        StringBuilder data = new StringBuilder("[");
-        
-        boolean first = true;
-        for (Map.Entry<Integer, Integer> entry : roleCounts.entrySet()) {
-            Role r = roleDAO.getRoleById(entry.getKey());
-            if (r != null) {
-                if (!first) {
-                    labels.append(",");
-                    data.append(",");
+        try {
+            StaffDAO staffDAO = getStaffDAO();
+            RoleDAO roleDAO = getRoleDAO();
+            for (Staff s : staffDAO.getAllStaff()) {
+                if (s.getRoleId() > 0) {
+                    roleCounts.put(s.getRoleId(), roleCounts.getOrDefault(s.getRoleId(), 0) + 1);
                 }
-                labels.append("\"").append(r.getTitle().replace("\"", "\\\"")).append("\"");
-                data.append(entry.getValue());
-                first = false;
             }
-        }
-        labels.append("]");
-        data.append("]");
         
-        roleChartModel = "{"
-            + "\"type\": \"bar\","
-            + "\"data\": {"
-            + "  \"labels\": " + labels.toString() + ","
-            + "  \"datasets\": [{"
-            + "    \"label\": \"Headcount per role\","
-            + "    \"data\": " + data.toString() + ","
-            + "    \"backgroundColor\": \"#3b82f6\""
-            + "  }]"
-            + "},"
-            + "\"options\": {"
-            + "  \"maintainAspectRatio\": false,"
-            + "  \"indexAxis\": \"y\","
-            + "  \"plugins\": {"
-            + "    \"legend\": {\"display\": false}"
-            + "  },"
-            + "  \"scales\": {"
-            + "    \"x\": {\"ticks\": {\"stepSize\": 1}}"
-            + "  }"
-            + "}"
-            + "}";
+            StringBuilder labels = new StringBuilder("[");
+            StringBuilder data = new StringBuilder("[");
+            
+            boolean first = true;
+            for (Map.Entry<Integer, Integer> entry : roleCounts.entrySet()) {
+                Role r = roleDAO.getRoleById(entry.getKey());
+                if (r != null) {
+                    if (!first) {
+                        labels.append(",");
+                        data.append(",");
+                    }
+                    labels.append("\"").append(r.getTitle().replace("\"", "\\\"")).append("\"");
+                    data.append(entry.getValue());
+                    first = false;
+                }
+            }
+            labels.append("]");
+            data.append("]");
+            
+            roleChartModel = "{"
+                + "\"type\": \"bar\","
+                + "\"data\": {"
+                + "  \"labels\": " + labels.toString() + ","
+                + "  \"datasets\": [{"
+                + "    \"label\": \"Headcount per role\","
+                + "    \"data\": " + data.toString() + ","
+                + "    \"backgroundColor\": \"#3b82f6\""
+                + "  }]"
+                + "},"
+                + "\"options\": {"
+                + "  \"maintainAspectRatio\": false,"
+                + "  \"indexAxis\": \"y\","
+                + "  \"plugins\": {"
+                + "    \"legend\": {\"display\": false}"
+                + "  },"
+                + "  \"scales\": {"
+                + "    \"x\": {\"ticks\": {\"stepSize\": 1}}"
+                + "  }"
+                + "}"
+                + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     public String getDepartmentChartModel() { 
-        createDepartmentChart();
         return departmentChartModel; 
     }
     
     public String getStatusChartModel() { 
-        createStatusChart();
         return statusChartModel; 
     }
     
     public String getRoleChartModel() { 
-        createRoleChart();
         return roleChartModel; 
+    }
+    
+    /** Call this to force a fresh chart rebuild (e.g. after a staff change). */
+    public void refreshCharts() {
+        initCharts();
     }
     
     //method for return total number of staff
     public int getTotalStaff(){
-        return staffDAO.getAllStaff().size();
+        try {
+            return getStaffDAO().getAllStaff().size();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
     
     //method for getting total number of departmenta
     public int getAllDepartments(){
-        return departmentDAO.getAllDepartments().size();
+        try {
+            return getDepartmentDAO().getAllDepartments().size();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
     
     //method for getting total number or roles
     public int getAllRoles(){
-        return roleDAO.getAllRoles().size();
+        try {
+            return getRoleDAO().getAllRoles().size();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
     
     //method for getting active staff
     public int getActiveStaff() {
-        return (int) staffDAO.getAllStaff().stream()
-                .filter(s -> "ACTIVE".equalsIgnoreCase(s.getStatus()))
-                .count();
+        try {
+            return (int) getStaffDAO().getAllStaff().stream()
+                    .filter(s -> "ACTIVE".equalsIgnoreCase(s.getStatus()))
+                    .count();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
     
     //method for getting inactive staff
     public int getInactiveStaff() {
-        return (int) staffDAO.getAllStaff().stream()
-                .filter(s -> "INACTIVE".equalsIgnoreCase(s.getStatus()))
-                .count();
+        try {
+            return (int) getStaffDAO().getAllStaff().stream()
+                    .filter(s -> "INACTIVE".equalsIgnoreCase(s.getStatus()))
+                    .count();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }

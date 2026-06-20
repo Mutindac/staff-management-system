@@ -1,0 +1,137 @@
+<ui:composition template="staffTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces">
+
+    <ui:define name="head">
+        <style>
+            .notif-page-item {
+                display: flex; gap: 20px; padding: 20px; border-bottom: 1px solid #e2e8f0; transition: background 0.2s;
+            }
+            .notif-page-item:last-child { border-bottom: none; }
+            .notif-page-item:hover { background: #f8fafc; }
+            .notif-page-item.unread { background: #eff6ff; }
+            .notif-page-icon {
+                width: 48px; height: 48px; border-radius: 50%; background: #dbeafe; color: #1d4ed8;
+                display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;
+            }
+            .notif-page-body { flex: 1; }
+            .notif-page-title { margin: 0 0 5px 0; font-size: 16px; font-weight: 600; color: #1e293b; }
+            .notif-page-msg { margin: 0 0 10px 0; font-size: 14px; color: #475569; line-height: 1.5; white-space: pre-wrap; }
+            .notif-page-meta { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 15px; }
+            .unread-badge { background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
+        </style>
+    </ui:define>
+
+    <ui:define name="title">Notifications - Staff Portal</ui:define>
+    <ui:define name="pageTitle">My Notifications</ui:define>
+
+    <ui:define name="content">
+        <div class="premium-card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="card-title"><i class="pi pi-bell" style="color: #3b82f6;"></i> Inbox</h3>
+                <h:form id="markReadForm">
+                    <p:commandButton value="Mark All as Read" action="#{staffProfileBean.markAllNotificationsRead}" 
+                                     update="@form :notifListForm :notifBellForm" icon="pi pi-check-circle"
+                                     styleClass="ui-button-outlined" rendered="#{staffProfileBean.unreadNotificationCount > 0}" />
+                </h:form>
+            </div>
+            
+            <div class="card-body" style="padding: 0;">
+                <h:form id="notifListForm">
+                <h:panelGroup id="notifContainer">
+                    <h:panelGroup rendered="#{empty staffProfileBean.myNotifications}">
+                        <div style="text-align: center; padding: 60px 20px; color: #94a3b8;">
+                            <i class="pi pi-inbox" style="font-size: 4rem; margin-bottom: 15px; color: #e2e8f0;"></i>
+                            <h3 style="margin: 0 0 5px 0; color: #64748b;">You're all caught up!</h3>
+                            <p style="margin: 0; font-size: 14px;">You have no new notifications.</p>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{not empty staffProfileBean.myNotifications}">
+                        <ui:repeat value="#{staffProfileBean.myNotifications}" var="notif">
+                            <div class="notif-page-item #{notif.isRead ? '' : 'unread'}">
+                                <div class="notif-page-icon">
+                                    <i class="pi pi-megaphone"></i>
+                                </div>
+                                <div class="notif-page-body">
+                                    <p:commandLink action="#{staffProfileBean.viewNotification(notif)}" 
+                                                   update=":notifModalForm :notifListForm :markReadForm :notifBellForm" 
+                                                   oncomplete="PF('notifModal').show();"
+                                                   style="text-decoration: none; display: block; color: inherit;">
+                                        <h4 class="notif-page-title">#{notif.title}</h4>
+                                        <p class="notif-page-msg" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">
+                                            <h:outputText value="#{notif.message}" escape="true" />
+                                        </p>
+                                    </p:commandLink>
+                                    
+                                    <div class="notif-page-meta" style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="display: flex; align-items: center; gap: 15px;">
+                                            <span><i class="pi pi-clock" style="margin-right: 5px;"></i>
+                                                <h:outputText value="#{notif.createdAt}">
+                                                    <f:convertDateTime pattern="MMM dd, yyyy - hh:mm a" timeZone="Africa/Nairobi" />
+                                                </h:outputText>
+                                            </span>
+                                            <h:panelGroup rendered="#{!notif.isRead}">
+                                                <span class="unread-badge">New</span>
+                                            </h:panelGroup>
+                                        </div>
+                                        
+                                        <p:commandButton icon="pi pi-trash" action="#{staffProfileBean.deleteNotification(notif)}" 
+                                                         update=":notifListForm :markReadForm :notifBellForm :globalMessages"
+                                                         styleClass="ui-button-danger ui-button-flat rounded-button" 
+                                                         style="width: 35px; height: 35px; padding: 0;" title="Delete Notification">
+                                            <p:confirm header="Confirm Delete" message="Delete this notification?" icon="pi pi-exclamation-triangle"/>
+                                        </p:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </ui:repeat>
+                    </h:panelGroup>
+                </h:panelGroup>
+                </h:form>
+            </div>
+        </div>
+        
+        <!-- View Notification Modal -->
+        <p:dialog id="notifModal" widgetVar="notifModal" header="Notification Details" modal="true" 
+                  fitViewport="true" responsive="true" width="500" showEffect="fade" hideEffect="fade" 
+                  resizable="false" style="border-radius: 12px; border: none;">
+            <h:form id="notifModalForm">
+                <h:panelGroup rendered="#{not empty staffProfileBean.selectedNotification}">
+                    <div style="padding: 10px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e293b;">#{staffProfileBean.selectedNotification.title}</h3>
+                        <p style="margin: 0 0 20px 0; color: #475569; line-height: 1.6; white-space: pre-wrap; font-size: 15px;">
+                            <h:outputText value="#{staffProfileBean.selectedNotification.message}" escape="true" />
+                        </p>
+                        <div style="font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <span>
+                                <i class="pi pi-clock" style="margin-right: 5px;"></i>
+                                <h:outputText value="#{staffProfileBean.selectedNotification.createdAt}">
+                                    <f:convertDateTime pattern="MMM dd, yyyy - hh:mm a" timeZone="Africa/Nairobi" />
+                                </h:outputText>
+                            </span>
+                            
+                            <p:commandButton value="Delete" icon="pi pi-trash" 
+                                             action="#{staffProfileBean.deleteNotification(staffProfileBean.selectedNotification)}"
+                                             update=":notifListForm :markReadForm :notifBellForm :globalMessages"
+                                             oncomplete="PF('notifModal').hide();"
+                                             styleClass="ui-button-danger ui-button-flat" style="padding: 5px 10px;" />
+                        </div>
+                    </div>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+        
+        <h:form>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes ui-button-danger" />
+            </p:confirmDialog>
+        </h:form>
+        
+    </ui:define>
+
+</ui:composition>

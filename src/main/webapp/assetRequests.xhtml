@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="template.xhtml">
+
+    <ui:define name="title">Manage Asset Requests</ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:messages id="messages" showDetail="false" closable="true">
+                <p:autoUpdate />
+            </p:messages>
+
+            <div class="card premium-card">
+                <div class="flex justify-content-between align-items-center mb-4" style="flex-wrap: wrap; gap: 10px;">
+                    <h2 class="m-0"><i class="pi pi-list mr-2 text-primary"></i> Asset Requests</h2>
+                </div>
+
+                <p:dataTable id="dt-requests" widgetVar="dtRequests" var="req" value="#{assetAdminBean.allRequests}"
+                             reflow="true" styleClass="products-table"
+                             rowKey="#{req.requestId}" paginator="true" rows="10" paginatorPosition="bottom"
+                             emptyMessage="No asset requests found.">
+
+                    <f:facet name="header">
+                        <div class="flex justify-content-end">
+                            <p:commandButton value="Export Report" icon="pi pi-file-excel" styleClass="ui-button-success mr-2" ajax="false">
+                                <p:dataExporter type="xls" target="dt-requests" fileName="Asset_Management_Report" />
+                            </p:commandButton>
+                            <p:commandButton value="PDF" icon="pi pi-file-pdf" styleClass="ui-button-danger" ajax="false">
+                                <p:dataExporter type="pdf" target="dt-requests" fileName="Asset_Management_Report" />
+                            </p:commandButton>
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="ID" sortBy="#{req.requestId}" style="width:70px; text-align:center;">
+                        <h:outputText value="REQ-#{req.requestId}" />
+                    </p:column>
+
+                    <p:column headerText="Staff" sortBy="#{req.staffName}" filterBy="#{req.staffName}">
+                        <h:outputText value="#{req.staffName}" style="font-weight: 500;" />
+                    </p:column>
+
+                    <p:column headerText="Asset" sortBy="#{req.assetName}" filterBy="#{req.assetName}">
+                        <h:outputText value="#{req.assetName}" style="font-weight: 500;" />
+                    </p:column>
+
+                    <p:column headerText="Duration">
+                        <h:outputText value="#{req.daysRequested} days" />
+                    </p:column>
+
+                    <p:column headerText="Time Left" style="text-align:center;">
+                        <h:panelGroup rendered="#{req.status == 'APPROVED'}">
+                            <h:outputText value="#{req.daysRemaining} days" style="font-weight: 600; color: #{req.daysRemaining le 1 ? '#ef4444' : '#10b981'};" rendered="#{req.daysRemaining ge 0}" />
+                            <p:tag severity="danger" value="OVERDUE" rendered="#{req.daysRemaining lt 0}" />
+                        </h:panelGroup>
+                        <h:outputText value="-" rendered="#{req.status != 'APPROVED'}" />
+                    </p:column>
+
+                    <p:column headerText="Status" sortBy="#{req.status}" filterBy="#{req.status}" style="width: 130px;">
+                        <p:tag severity="#{req.status == 'APPROVED' ? 'success' : (req.status == 'DECLINED' ? 'danger' : (req.status == 'RETURNED' ? 'info' : 'warning'))}" value="#{req.status}" style="width:100%; text-align:center; padding: 5px;" />
+                    </p:column>
+
+                    <p:column headerText="Actions" style="width: 160px; text-align: center;">
+                        <h:panelGroup rendered="#{req.status == 'PENDING'}">
+                            <p:commandButton icon="pi pi-check" styleClass="rounded-button ui-button-success mr-2" action="#{assetAdminBean.approveRequest(req)}" update=":form:dt-requests" title="Approve" style="margin-right: 5px;" />
+                            <p:commandButton icon="pi pi-times" styleClass="rounded-button ui-button-danger" action="#{assetAdminBean.declineRequest(req)}" update=":form:dt-requests" title="Decline" />
+                        </h:panelGroup>
+                        
+                        <h:panelGroup rendered="#{req.status == 'APPROVED'}">
+                            <p:commandButton value="Return" icon="pi pi-undo" styleClass="ui-button-info ui-button-outlined" 
+                                             update=":returnForm" oncomplete="PF('returnModal').show();" style="border-radius: 8px;">
+                                <f:setPropertyActionListener value="#{req}" target="#{assetAdminBean.selectedRequest}" />
+                            </p:commandButton>
+                        </h:panelGroup>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </h:form>
+
+        <p:dialog header="Process Asset Return" widgetVar="returnModal" modal="true" responsive="true" width="450" showEffect="fade" hideEffect="fade" style="border-radius: 12px; border: none;">
+            <h:form id="returnForm">
+                <h:panelGroup rendered="#{not empty assetAdminBean.selectedRequest}">
+                    <div class="ui-fluid p-3">
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                            <div style="margin-bottom: 5px;"><span style="color: #64748b; font-size: 13px;">Asset:</span> <strong style="color: #1e293b;">#{assetAdminBean.selectedRequest.assetName}</strong></div>
+                            <div><span style="color: #64748b; font-size: 13px;">Staff:</span> <strong style="color: #1e293b;">#{assetAdminBean.selectedRequest.staffName}</strong></div>
+                        </div>
+                        
+                        <div class="p-field mb-4">
+                            <p:outputLabel for="notes" value="Condition Notes (Optional)" style="font-weight: 500;" />
+                            <p:inputTextarea id="notes" value="#{assetAdminBean.conditionNotes}" rows="4" placeholder="e.g. Good condition, minor scratches..." />
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                            <p:commandButton value="Cancel" type="button" onclick="PF('returnModal').hide();" styleClass="ui-button-secondary ui-button-flat" />
+                            <p:commandButton value="Confirm Return" action="#{assetAdminBean.processReturn}" update=":form:dt-requests @form" oncomplete="PF('returnModal').hide();" styleClass="action-button" icon="pi pi-check" />
+                        </div>
+                    </div>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

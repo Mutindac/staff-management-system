@@ -245,7 +245,7 @@ body {
 }
 
 /* Mobile Responsive */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 991px) {
     .menu-button {
         display: block !important;
     }
@@ -279,5 +279,20 @@ body {
 
     .premium-card {
         padding: 15px;
+        overflow-x: auto;
+    }
+    
+    /* Make tables wrap or scroll properly */
+    .ui-datatable-reflow .ui-datatable-data td {
+        word-break: break-word;
+    }
+    
+    /* Responsive Modals */
+    .ui-dialog {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        margin-left: 0 !important;
     }
 }

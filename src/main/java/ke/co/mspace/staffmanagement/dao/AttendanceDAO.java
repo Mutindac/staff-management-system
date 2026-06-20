@@ -152,6 +152,19 @@ public class AttendanceDAO {
         return list;
     }
 
+    public void updateAttendance(int attendanceId, Timestamp checkInTime, Timestamp checkOutTime, String status) {
+        String sql = "UPDATE attendance SET checkInTime = ?, checkOutTime = ?, status = ? WHERE attendanceId = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setTimestamp(1, checkInTime);
+            stmt.setTimestamp(2, checkOutTime);
+            stmt.setString(3, status);
+            stmt.setInt(4, attendanceId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void deleteAttendanceByStaffId(int staffId) {
         String sql = "DELETE FROM attendance WHERE staffId = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

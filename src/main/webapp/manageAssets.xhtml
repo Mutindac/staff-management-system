@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="template.xhtml">
+
+    <ui:define name="title">Manage Assets Inventory</ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:messages id="messages" showDetail="false" closable="true">
+                <p:autoUpdate />
+            </p:messages>
+
+            <div class="card premium-card">
+                <div class="flex justify-content-between align-items-center mb-4" style="flex-wrap: wrap; gap: 10px;">
+                    <h2 class="m-0"><i class="pi pi-box mr-2 text-primary"></i> Assets Inventory</h2>
+                    <p:commandButton value="Add Asset" icon="pi pi-plus" styleClass="action-button" onclick="PF('addAssetModal').show();" />
+                </div>
+
+                <p:dataTable id="dt-assets" widgetVar="dtAssets" var="asset" value="#{assetAdminBean.allAssets}"
+                             reflow="true" styleClass="products-table"
+                             rowKey="#{asset.assetId}" paginator="true" rows="10" paginatorPosition="bottom"
+                             emptyMessage="No assets found.">
+
+                    <p:column headerText="Asset Name" sortBy="#{asset.name}" filterBy="#{asset.name}">
+                        <div class="flex align-items-center">
+                            <h:panelGroup rendered="#{not empty asset.image}">
+                                <img src="data:image/png;base64,#{asset.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; margin-right: 10px;" />
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{empty asset.image}">
+                                <div style="width: 40px; height: 40px; background: #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                    <i class="pi pi-box" style="color: #64748b;"></i>
+                                </div>
+                            </h:panelGroup>
+                            <h:outputText value="#{asset.name}" style="font-weight: 600;" />
+                        </div>
+                    </p:column>
+
+                    <p:column headerText="Description">
+                        <h:outputText value="#{asset.description}" />
+                    </p:column>
+
+                    <p:column headerText="Total Qty" sortBy="#{asset.totalQuantity}" style="text-align: center; width: 100px;">
+                        <h:outputText value="#{asset.totalQuantity}" />
+                    </p:column>
+
+                    <p:column headerText="Available Qty" sortBy="#{asset.availableQuantity}" style="text-align: center; width: 120px;">
+                        <p:tag severity="#{asset.availableQuantity > 0 ? 'success' : 'danger'}" value="#{asset.availableQuantity}" style="font-size: 14px;" />
+                    </p:column>
+
+                    <p:column headerText="Actions" style="width: 150px; text-align: center;">
+                        <p:commandButton icon="pi pi-pencil" styleClass="rounded-button ui-button-info mr-2" 
+                                         update=":editAssetForm" oncomplete="PF('editAssetModal').show();" title="Edit">
+                            <f:setPropertyActionListener value="#{asset}" target="#{assetAdminBean.currentAsset}" />
+                        </p:commandButton>
+                        <p:commandButton icon="pi pi-trash" styleClass="rounded-button ui-button-danger" 
+                                         action="#{assetAdminBean.deleteAsset(asset)}" update=":form:dt-assets" title="Delete">
+                            <p:confirm header="Confirm" message="Delete this asset?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </h:form>
+
+        <p:dialog header="Add New Asset" widgetVar="addAssetModal" modal="true" responsive="true" width="450" showEffect="fade" hideEffect="fade" style="border-radius: 12px; border: none;">
+            <h:form id="addAssetForm" enctype="multipart/form-data">
+                <div class="ui-fluid p-3" style="max-height: 75vh; overflow-y: auto; overflow-x: hidden;">
+                    <div class="p-field mb-3">
+                        <p:outputLabel for="name" value="Asset Name" style="font-weight: 500;" />
+                        <p:inputText id="name" value="#{assetAdminBean.newAsset.name}" required="true" />
+                    </div>
+                    <div class="p-field mb-3">
+                        <p:outputLabel for="desc" value="Description" style="font-weight: 500;" />
+                        <p:inputTextarea id="desc" value="#{assetAdminBean.newAsset.description}" rows="3" />
+                    </div>
+                    <div class="p-field mb-3">
+                        <p:outputLabel value="Asset Image (Optional)" style="font-weight: 500;" />
+                        <p:fileUpload listener="#{assetAdminBean.handleNewAssetImageUpload}" mode="advanced" auto="true" accept="image/*" update="newImagePreview" process="@this" styleClass="mt-2" />
+                        <h:panelGroup id="newImagePreview">
+                            <h:panelGroup rendered="#{not empty assetAdminBean.newAsset.image}">
+                                <div style="margin-top: 10px;">
+                                    <img src="data:image/png;base64,#{assetAdminBean.newAsset.image}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;" />
+                                </div>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </div>
+                    <div class="p-field mb-4">
+                        <p:outputLabel for="qty" value="Total Quantity" style="font-weight: 500;" />
+                        <p:spinner id="qty" value="#{assetAdminBean.newAsset.totalQuantity}" min="1" required="true" />
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <p:commandButton value="Cancel" type="button" onclick="PF('addAssetModal').hide();" styleClass="ui-button-secondary ui-button-flat" />
+                        <p:commandButton value="Save Asset" action="#{assetAdminBean.saveNewAsset}" update=":form:dt-assets @form" oncomplete="if (!args.validationFailed) PF('addAssetModal').hide();" styleClass="action-button" icon="pi pi-check" />
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Edit Asset" widgetVar="editAssetModal" modal="true" responsive="true" width="450" showEffect="fade" hideEffect="fade" style="border-radius: 12px; border: none;">
+            <h:form id="editAssetForm" enctype="multipart/form-data">
+                <h:panelGroup rendered="#{not empty assetAdminBean.currentAsset}">
+                    <div class="ui-fluid p-3" style="max-height: 75vh; overflow-y: auto; overflow-x: hidden;">
+                        <div class="p-field mb-3">
+                            <p:outputLabel for="editName" value="Asset Name" style="font-weight: 500;" />
+                            <p:inputText id="editName" value="#{assetAdminBean.currentAsset.name}" required="true" />
+                        </div>
+                        <div class="p-field mb-3">
+                            <p:outputLabel for="editDesc" value="Description" style="font-weight: 500;" />
+                            <p:inputTextarea id="editDesc" value="#{assetAdminBean.currentAsset.description}" rows="3" />
+                        </div>
+                        <div class="p-field mb-3">
+                            <p:outputLabel value="Asset Image (Optional)" style="font-weight: 500;" />
+                            <p:fileUpload listener="#{assetAdminBean.handleEditAssetImageUpload}" mode="advanced" auto="true" accept="image/*" update="editImagePreview" process="@this" styleClass="mt-2" />
+                            <h:panelGroup id="editImagePreview">
+                                <h:panelGroup rendered="#{not empty assetAdminBean.currentAsset.image}">
+                                    <div style="margin-top: 10px;">
+                                        <img src="data:image/png;base64,#{assetAdminBean.currentAsset.image}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;" />
+                                    </div>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </div>
+                        <div class="p-field mb-3">
+                            <p:outputLabel for="editTotal" value="Total Quantity" style="font-weight: 500;" />
+                            <p:spinner id="editTotal" value="#{assetAdminBean.currentAsset.totalQuantity}" min="1" required="true" />
+                        </div>
+                        <div class="p-field mb-4">
+                            <p:outputLabel for="editAvail" value="Available Quantity" style="font-weight: 500;" />
+                            <p:spinner id="editAvail" value="#{assetAdminBean.currentAsset.availableQuantity}" min="0" required="true" />
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                            <p:commandButton value="Cancel" type="button" onclick="PF('editAssetModal').hide();" styleClass="ui-button-secondary ui-button-flat" />
+                            <p:commandButton value="Update Asset" action="#{assetAdminBean.updateAsset}" update=":form:dt-assets @form" oncomplete="if (!args.validationFailed) PF('editAssetModal').hide();" styleClass="action-button" icon="pi pi-check" />
+                        </div>
+                    </div>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+        
+        <h:form>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes ui-button-danger" />
+            </p:confirmDialog>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

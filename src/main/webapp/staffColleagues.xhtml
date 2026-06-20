@@ -1,0 +1,54 @@
+<ui:composition template="staffTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces">
+
+    <ui:define name="title">Colleagues - Staff Portal</ui:define>
+    <ui:define name="pageTitle">Department Colleagues</ui:define>
+
+    <ui:define name="content">
+        <div class="premium-card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="pi pi-users" style="color: #f59e0b;"></i> My Team</h3>
+            </div>
+            <div class="card-body">
+                <div class="colleagues-split" style="display: flex; gap: 30px; flex-wrap: wrap;">
+                    
+                    <div class="table-col" style="flex: 1; min-width: 300px;">
+                        <h:form id="colleaguesForm">
+                            <p:dataTable value="#{staffProfileBean.colleagues}" var="c"
+                                         paginator="true" rows="10" styleClass="ui-datatable-striped"
+                                         emptyMessage="No colleagues found in your department." size="large">
+                                <p:column headerText="Name" sortBy="#{c.firstName}">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 36px; height: 36px; border-radius: 18px; background: #e2e8f0; color: #475569; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px;">
+                                            #{c.firstName.substring(0,1)}#{c.lastName.substring(0,1)}
+                                        </div>
+                                        <h:outputText value="#{c.firstName} #{c.lastName}" style="font-weight: 600; color: #1e293b;" />
+                                    </div>
+                                </p:column>
+                                <p:column headerText="Role" sortBy="#{staffProfileBean.getRoleTitleForStaff(c)}">
+                                    <h:outputText value="#{staffProfileBean.getRoleTitleForStaff(c)}" style="color: #475569;" />
+                                </p:column>
+                                <p:column headerText="Email" sortBy="#{c.email}">
+                                    <h:outputText value="#{c.email}" style="color: #64748b; font-size: 13px;" />
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </div>
+
+                    <div class="chart-col" style="width: 350px; background: #f8fafc; border-radius: 12px; padding: 25px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center;">
+                        <h4 style="margin: 0 0 20px 0; color: #1e293b; text-align: center;">Role Distribution</h4>
+                        <div style="position: relative; height: 250px; width: 100%;">
+                            <p:chart value="#{staffProfileBean.departmentRoleChartModel}" style="width: 100%; height: 100%;" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

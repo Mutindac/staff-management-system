@@ -87,6 +87,33 @@ public class LeaveRequest implements Serializable {
         this.requestDate = requestDate;
     }
 
+    public Integer getDaysRemaining() {
+        if (!"APPROVED".equalsIgnoreCase(status) || endDate == null) {
+            return null;
+        }
+        long now = System.currentTimeMillis();
+        // If the leave hasn't started yet, calculate from start to end
+        // Or calculate from now to end? "days left before your leave expires"
+        // implies calculating from today to the end date if currently on leave,
+        // or from start to end if it hasn't started.
+        // For simplicity, let's just do endDate - today if today is before endDate.
+        if (now > endDate.getTime()) {
+            return 0; // Expired
+        }
+        
+        long diff;
+        if (now < startDate.getTime()) {
+            // Hasn't started yet, full duration
+            diff = endDate.getTime() - startDate.getTime();
+        } else {
+            // Currently on leave
+            diff = endDate.getTime() - now;
+        }
+        
+        // Convert to days
+        return (int) Math.ceil((double) diff / (1000 * 60 * 60 * 24));
+    }
+
     @Override
     public String toString() {
         return "LeaveRequest{" +

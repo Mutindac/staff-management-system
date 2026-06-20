@@ -49,6 +49,9 @@ public class AuthFilter implements Filter {
                                       requestURI.contains("useraccountList.xhtml") ||
                                       requestURI.contains("attendanceList.xhtml") ||
                                       requestURI.contains("leaveRequests.xhtml") ||
+                                      requestURI.contains("manageAssets.xhtml") ||
+                                      requestURI.contains("assetRequests.xhtml") ||
+                                      requestURI.contains("notificationList.xhtml") ||
                                       requestURI.contains("index.xhtml");
 
                 if ("Staff".equalsIgnoreCase(role) && isAdminPage) {

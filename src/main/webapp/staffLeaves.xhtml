@@ -1,0 +1,46 @@
+<ui:composition template="staffTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces">
+
+    <ui:define name="title">Leave Requests - Staff Portal</ui:define>
+    <ui:define name="pageTitle">Leave Requests</ui:define>
+
+    <ui:define name="content">
+        <div class="premium-card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="pi pi-envelope" style="color: #8b5cf6;"></i> My Leave History</h3>
+                <p:commandButton value="Apply for Leave" type="button" onclick="PF('leaveModal').show();"
+                                 styleClass="action-button leave" icon="pi pi-plus" />
+            </div>
+            
+            <div class="card-body">
+                <h:form id="myLeavesForm">
+                    <p:dataTable value="#{leaveRequestBean.myLeaveRequests}" var="leave"
+                                 paginator="true" rows="10" emptyMessage="You have not submitted any leave requests yet."
+                                 styleClass="ui-datatable-striped" size="large">
+                        <p:column headerText="Start Date" sortBy="#{leave.startDate}">
+                            <h:outputText value="#{leave.startDate}"><f:convertDateTime pattern="MMM dd, yyyy" /></h:outputText>
+                        </p:column>
+                        <p:column headerText="End Date" sortBy="#{leave.endDate}">
+                            <h:outputText value="#{leave.endDate}"><f:convertDateTime pattern="MMM dd, yyyy" /></h:outputText>
+                        </p:column>
+                        <p:column headerText="Days Remaining" style="text-align: center;">
+                            <h:outputText value="#{leave.daysRemaining != null ? leave.daysRemaining += ' Days' : '-'}" style="font-weight: 600; color: #{leave.daysRemaining != null and leave.daysRemaining le 3 ? '#ef4444' : '#10b981'};" />
+                        </p:column>
+                        <p:column headerText="Reason">
+                            <h:outputText value="#{leave.reason}" style="color: #475569;" />
+                        </p:column>
+                        <p:column headerText="Status" width="150" sortBy="#{leave.status}" style="text-align: center;">
+                            <p:tag severity="#{leave.status == 'APPROVED' ? 'success' : (leave.status == 'DECLINED' ? 'danger' : 'warning')}"
+                                   value="#{leave.status}" style="border-radius: 12px; padding: 6px 12px; font-size: 13px; width: 100%;" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

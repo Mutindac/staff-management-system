@@ -1,0 +1,56 @@
+<ui:composition template="staffTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces">
+
+    <ui:define name="title">Attendance History - Staff Portal</ui:define>
+    <ui:define name="pageTitle">Attendance History</ui:define>
+
+    <ui:define name="content">
+        <div class="premium-card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="pi pi-calendar-plus" style="color: #10b981;"></i> My Attendance Logs</h3>
+            </div>
+
+            <div class="card-body">
+                <h:form id="filterForm" style="display: flex; gap: 8px; align-items: center; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; flex-wrap: wrap;">
+                    <span style="font-size: 13px; color: #64748b; font-weight: 600;">Filter By Date:</span>
+                    <p:datePicker value="#{staffProfileBean.filterStartDate}" placeholder="Start Date" pattern="dd MMM yy" style="width: 140px;" />
+                    <p:datePicker value="#{staffProfileBean.filterEndDate}" placeholder="End Date" pattern="dd MMM yy" style="width: 140px;" />
+                    <p:commandButton action="#{staffProfileBean.filterAttendanceHistory}"
+                                     update=":attendanceHistoryForm:attendanceTable"
+                                     icon="pi pi-filter" styleClass="ui-button-outlined"
+                                     style="padding: 0; width: 40px; height: 40px;" />
+                    <p:commandButton ajax="false" icon="pi pi-file-pdf"
+                                     styleClass="ui-button-success ui-button-outlined"
+                                     style="padding: 0; width: 40px; height: 40px; margin-left: auto;">
+                        <p:dataExporter type="pdf" target=":attendanceHistoryForm:attendanceTable" fileName="Attendance_Report" />
+                    </p:commandButton>
+                </h:form>
+
+                <h:form id="attendanceHistoryForm">
+                    <p:dataTable id="attendanceTable" value="#{staffProfileBean.myAttendanceHistory}" var="att"
+                                 paginator="true" rows="10" emptyMessage="No attendance records found."
+                                 styleClass="ui-datatable-striped" size="large">
+                        <p:column headerText="Date" sortBy="#{att.workDate}">
+                            <h:outputText value="#{att.workDate}"><f:convertDateTime pattern="MMM dd, yyyy" /></h:outputText>
+                        </p:column>
+                        <p:column headerText="Check In" sortBy="#{att.checkInTime}">
+                            <h:outputText value="#{att.checkInTime}"><f:convertDateTime pattern="hh:mm a" timeZone="Africa/Nairobi" /></h:outputText>
+                        </p:column>
+                        <p:column headerText="Check Out" sortBy="#{att.checkOutTime}">
+                            <h:outputText value="#{att.checkOutTime}"><f:convertDateTime pattern="hh:mm a" timeZone="Africa/Nairobi" /></h:outputText>
+                        </p:column>
+                        <p:column headerText="Status" width="150" sortBy="#{att.status}">
+                            <p:tag severity="#{att.status == 'PRESENT' ? 'success' : (att.status == 'ABSENT' ? 'danger' : 'warning')}" 
+                                   value="#{att.status}" style="border-radius: 12px; padding: 4px 12px; font-size: 13px; width: 100%; text-align: center;" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

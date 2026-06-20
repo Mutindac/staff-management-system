@@ -3,126 +3,237 @@
     xmlns:ui="jakarta.faces.facelets" xmlns:p="primefaces">
 <h:head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-        <ui:insert name="title">Staff Management Admin</ui:insert>
-    </title>
+    <title><ui:insert name="title">Staff Management Admin</ui:insert></title>
     <h:outputStylesheet library="css" name="style.css" />
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #f1f5f9; height: 100vh; overflow: hidden; }
+        .app-container { display: flex; height: 100vh; width: 100vw; }
+        
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+            color: #334155;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+        
+        .main-content {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        
+        .sidebar-header {
+            padding: 20px 25px; display: flex; align-items: center; gap: 12px;
+            font-size: 20px; font-weight: 700; border-bottom: 1px solid #e2e8f0; margin-bottom: 15px;
+            color: #e94560;
+        }
+        
+        .nav-menu { list-style: none; padding: 0; margin: 0; flex: 1; }
+        .nav-item { margin: 0 12px 5px 12px; }
+        .nav-link {
+            display: flex; align-items: center; gap: 15px;
+            padding: 12px 15px; color: #475569;
+            text-decoration: none; border-radius: 8px;
+            font-weight: 600; font-size: 14px; transition: all 0.2s ease;
+            cursor: pointer; border: none; background: transparent; width: 100%; text-align: left;
+        }
+        .nav-link:hover, .nav-link.active { background: rgba(0,0,0,0.05); color: #0f172a; }
+        .nav-link i { font-size: 1.1rem; width: 20px; text-align: center; color: #e94560; }
+        
+        .nav-header { padding: 15px 20px 5px 25px; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+
+        .topbar {
+            height: 70px; background: white; padding: 0 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            position: sticky; top: 0; z-index: 900; flex-shrink: 0;
+        }
+        
+        .content-area {
+            padding: 30px; width: 100%; box-sizing: border-box; flex: 1;
+        }
+        
+        @media (max-width: 991px) {
+            .sidebar { position: fixed; transform: translateX(-100%); transition: transform 0.3s; }
+            .sidebar.open { transform: translateX(0); }
+            .mobile-toggle { display: block !important; }
+            .content-area { padding: 15px; }
+            .topbar-user span { display: none; }
+            .topbar { padding: 0 15px; }
+        }
+        .mobile-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #1a1a2e; padding: 0; margin-right: 15px; }
+    </style>
+    <script>
+        //<![CDATA[
+        function toggleSidebar() { document.querySelector('.sidebar').classList.toggle('open'); }
+        
+        // Close sidebar when clicking outside on mobile
+        $(document).on('click', function(e) {
+            if ($(window).width() <= 991) {
+                if (!$(e.target).closest('.sidebar').length && !$(e.target).closest('.mobile-toggle').length) {
+                    $('.sidebar').removeClass('open');
+                }
+            }
+        });
+        //]]>
+    </script>
     <ui:insert name="head" />
 </h:head>
+
 <h:body>
-    <div class="layout-wrapper">
-        <!-- Topbar -->
-        <div class="layout-topbar">
-            <div style="display: flex; align-items: center;">
-                <a href="#" id="menu-button" class="menu-button"
-                    style="display: none; color: var(--text-primary); margin-right: 15px; font-size: 1.5rem; text-decoration: none;">
-                    <i class="pi pi-bars"></i>
-                </a>
-                <div class="topbar-logo">
-                    <i class="pi pi-users" style="font-size: 1.2rem; margin-right: 10px;"></i>
-                    Admin
+    <div class="app-container">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="pi pi-users"></i> <span>Admin</span>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <h:link outcome="index.xhtml" styleClass="nav-link #{view.viewId.contains('index') ? 'active' : ''}">
+                        <i class="pi pi-home"></i> Dashboard
+                    </h:link>
+                </li>
+                <li class="nav-item">
+                    <h:link outcome="staffList.xhtml" styleClass="nav-link #{view.viewId.contains('staffList') ? 'active' : ''}">
+                        <i class="pi pi-users"></i> Staff
+                    </h:link>
+                </li>
+                <li class="nav-item">
+                    <h:link outcome="departmentList.xhtml" styleClass="nav-link #{view.viewId.contains('departmentList') ? 'active' : ''}">
+                        <i class="pi pi-building"></i> Departments
+                    </h:link>
+                </li>
+                <li class="nav-item">
+                    <h:link outcome="roleList.xhtml" styleClass="nav-link #{view.viewId.contains('roleList') ? 'active' : ''}">
+                        <i class="pi pi-id-card"></i> Roles
+                    </h:link>
+                </li>
+
+                <div class="nav-header">📦 Asset Management</div>
+                <li class="nav-item">
+                    <h:link outcome="manageAssets.xhtml" styleClass="nav-link #{view.viewId.contains('manageAssets') ? 'active' : ''}">
+                        <i class="pi pi-box"></i> Asset Inventory
+                    </h:link>
+                </li>
+                <li class="nav-item">
+                    <h:link outcome="assetRequests.xhtml" styleClass="nav-link #{view.viewId.contains('assetRequests') ? 'active' : ''}">
+                        <i class="pi pi-list"></i> Asset Requests
+                    </h:link>
+                </li>
+
+                <div class="nav-header">⚙ Accounts</div>
+                <li class="nav-item">
+                    <h:link outcome="useraccountList.xhtml" styleClass="nav-link #{view.viewId.contains('useraccountList') ? 'active' : ''}">
+                        <i class="pi pi-user"></i> User Accounts
+                    </h:link>
+                </li>
+                <li class="nav-item">
+                    <h:link outcome="attendanceList.xhtml" styleClass="nav-link #{view.viewId.contains('attendanceList') ? 'active' : ''}">
+                        <i class="pi pi-calendar-times"></i> Attendance Logs
+                    </h:link>
+                </li>
+                <li class="nav-item">
+                    <h:link outcome="leaveRequests.xhtml" styleClass="nav-link #{view.viewId.contains('leaveRequests') ? 'active' : ''}">
+                        <i class="pi pi-envelope"></i> Leave Requests
+                    </h:link>
+                </li>
+                <li class="nav-item">
+                    <h:link outcome="notificationList.xhtml" styleClass="nav-link #{view.viewId.contains('notificationList') ? 'active' : ''}">
+                        <i class="pi pi-bell"></i> Notifications
+                    </h:link>
+                </li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="topbar">
+                <div style="display: flex; align-items: center;">
+                    <button class="mobile-toggle" onclick="toggleSidebar()"><i class="pi pi-bars"></i></button>
+                    <h2 style="margin: 0; font-size: 1.25rem; color: #1e293b; font-weight: 600; display: none; @media (min-width: 768px) { display: block; }"><ui:insert name="pageTitle"></ui:insert></h2>
+                </div>
+
+                <div class="topbar-user" style="display: flex; align-items: center; gap: 15px;">
+                    <h:form style="margin:0;">
+                        <p:commandButton value="Create Notification" icon="pi pi-bell" type="button"
+                            onclick="PF('notificationDialog').show()" styleClass="ui-button-warning rounded-button" />
+                    </h:form>
+
+                    <span style="color: #64748b; font-size: 14px; font-weight: 600;">
+                        Welcome, #{loginBean.loggedInUser != null ? loginBean.loggedInUser.username : 'Admin'}
+                    </span>
+
+                    <h:form style="margin:0;">
+                        <p:commandButton value="Logout" action="#{loginBean.logout}" icon="pi pi-power-off"
+                            styleClass="ui-button-danger rounded-button ui-button-flat" />
+                    </h:form>
                 </div>
             </div>
-            <div class="topbar-user">
-                <span><i class="pi pi-user" style="margin-right: 5px;"></i> Welcome, #{loginBean.loggedInUser != null ?
-                    loginBean.loggedInUser.username : 'Admin'}</span>
-                <h:form style="margin:0;">
-                    <p:commandButton value="Logout" action="#{loginBean.logout}" icon="pi pi-power-off"
-                        styleClass="ui-button-danger rounded-button ui-button-flat" />
-                </h:form>
+
+            <div class="content-area">
+                <p:growl id="globalMessages" showDetail="true" life="5000">
+                    <p:autoUpdate />
+                </p:growl>
+
+                <ui:insert name="content">
+                    Default Content
+                </ui:insert>
+            </div>
+
+            <div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 13px; margin-top: auto; border-top: 1px solid #e2e8f0; background: white;">
+                Staff Management System © <span id="year"></span> Mspace. All rights reserved.
             </div>
         </div>
 
-        <div class="layout-main-container">
-            <!-- Sidebar -->
-            <div class="layout-sidebar">
-                <h:form>
-                    <p:menu toggleable="true" styleClass="my-sidebar-menu"
-                        style="width:100%; border:none; background:transparent;">
-                        <p:menuitem value="Dashboard" outcome="index.xhtml" icon="pi pi-home" />
-
-                        <p:menuitem value="Staff" outcome="staffList.xhtml" icon="pi pi-users" />
-
-                        <p:menuitem value="Departments" outcome="departmentList.xhtml" icon="pi pi-building" />
-
-                        <p:menuitem value="Roles" outcome="roleList.xhtml" icon="pi pi-id-card" />
-
-                        <p:submenu label="⚙ Accounts">
-
-                            <p:menuitem value="User Accounts" outcome="useraccountList.xhtml" icon="pi pi-user" />
-
-                            <p:menuitem value="Attendance Logs" outcome="attendanceList.xhtml"
-                                icon="pi pi-calendar-times" />
-
-                            <p:menuitem value="Leave Requests" outcome="leaveRequests.xhtml" icon="pi pi-envelope" />
-
-                        </p:submenu>
-                    </p:menu>
-
-                    <!-- Inject icons into submenu headers and fix colors -->
-                    <h:outputScript>
-                        //
-                        <![CDATA[
-                        $(document).ready(function() {
-                            $('#menu-button').on('click', function(e) {
-                                e.preventDefault();
-                                $('.layout-sidebar').toggleClass('active');
-                            });
-                            
-                            setTimeout(function() {
-                                var headers = $('.my-sidebar-menu h3');
-                                if(headers.length === 0) {
-                                    headers = $('.my-sidebar-menu .ui-menu-parent > a');
-                                }
-                                
-                                // Make the headers readable
-                                headers.css({
-                                    'color': '#334155',
-                                    'background': 'rgba(0,0,0,0.02)',
-                                    'padding': '12px 20px',
-                                    'font-weight': '600',
-                                    'border-bottom': '1px solid #e2e8f0'
-                                });
-                                
-                                // Inject icons based on text content to be bulletproof
-                                headers.each(function() {
-                                    var text = $(this).text().trim();
-                                    if(text === 'Staff' && $(this).find('.pi-users').length === 0) {
-                                        $(this).prepend('<span class="ui-menuitem-icon pi pi-users" style="margin-right: 10px; color: #e94560; font-size: 1.1rem; vertical-align: middle;"></span>');
-                                    } else if(text === 'Departments' && $(this).find('.pi-building').length === 0) {
-                                        $(this).prepend('<span class="ui-menuitem-icon pi pi-building" style="margin-right: 10px; color: #e94560; font-size: 1.1rem; vertical-align: middle;"></span>');
-                                    } else if(text === 'Roles' && $(this).find('.pi-id-card').length === 0) {
-                                        $(this).prepend('<span class="ui-menuitem-icon pi pi-id-card" style="margin-right: 10px; color: #e94560; font-size: 1.1rem; vertical-align: middle;"></span>');
-                                    } else if(text === 'Accounts' && $(this).find('.pi-cog').length === 0) {
-                                        $(this).prepend('<span class="ui-menuitem-icon pi pi-cog" style="margin-right: 10px; color: #e94560; font-size: 1.1rem; vertical-align: middle;"></span>');
-                                    }
-                                });
-                            }, 100);
-                        });
-                        //]]>
-                    </h:outputScript>
-                </h:form>
-            </div>
-
-            <!-- Main Content -->
-            <div class="layout-main">
-                <!-- Page Content -->
-                <div class="layout-content">
-                    <ui:insert name="content">
-                        Default Content
-                    </ui:insert>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="layout-footer">
-            Staff Management System © <span id="year "></span> Mspace All rights reserved.
-        </div>
-        <script>
-            document.getElementById("year").textContent = new Date().getFullYear();
-        </script>
     </div>
-</h:body>
 
+    <!-- NOTIFICATION DIALOG -->
+    <p:dialog header="Create Notification" widgetVar="notificationDialog" modal="true" width="700" responsive="true" fitViewport="true" resizable="false" closable="true">
+        <h:form id="notificationForm">
+            <div style="max-height: 80vh; overflow-y: auto; overflow-x: hidden; padding: 10px;">
+                <p:messages id="notifMessages" showDetail="true" closable="true" style="margin-bottom: 15px;" />
+                <div class="p-fluid">
+                    <div style="margin-bottom:20px;">
+                        <p:outputLabel for="title" value="Title" style="display:block; margin-bottom:8px; font-weight:600;" />
+                        <p:inputText id="title" value="#{notificationController.notification.title}" style="width:100%;" />
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <p:outputLabel for="message" value="Message" style="display:block; margin-bottom:8px; font-weight:600;" />
+                        <p:inputTextarea id="message" rows="6" autoResize="false" maxlength="1000" value="#{notificationController.notification.message}" style="width:100%;" />
+                    </div>
+                    <div style="margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+                        <p:selectBooleanCheckbox value="#{notificationController.sendToAll}">
+                            <p:ajax update="staffList" />
+                        </p:selectBooleanCheckbox>
+                        <h:outputText value="Send To All Staff" />
+                    </div>
+                    <div style="margin-bottom:25px;">
+                        <p:outputLabel value="Select Employees" style="display:block; margin-bottom:10px; font-weight:600;" />
+                        <p:selectManyMenu id="staffList" value="#{notificationController.selectedStaff}" disabled="#{notificationController.sendToAll}" style="width:100%; height:220px;">
+                            <f:selectItems value="#{notificationController.allStaff}" var="s" itemLabel="#{s.firstName} #{s.lastName}" itemValue="#{s.staffId}" />
+                        </p:selectManyMenu>
+                    </div>
+                    <p:commandButton value="Send Notification" icon="pi pi-send" action="#{notificationController.sendNotification}" process="@form" update="@form notifMessages" oncomplete="if (!args.validationFailed) setTimeout(function(){ PF('notificationDialog').hide(); }, 1500);" styleClass="ui-button-success" style="width:100%;" />
+                </div>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <script>
+        //<![CDATA[
+        document.getElementById("year").textContent = new Date().getFullYear();
+        //]]>
+    </script>
+</h:body>
 </html>

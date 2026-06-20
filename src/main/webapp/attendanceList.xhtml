@@ -65,8 +65,65 @@
                         </f:facet>
                         <p:tag severity="#{log.status eq 'PRESENT' ? 'success' : 'danger'}" value="#{log.status}" />
                     </p:column>
+                    <p:column headerText="Actions" style="width: 80px; text-align: center;" exportable="false">
+                        <p:commandButton icon="pi pi-pencil"
+                                         styleClass="ui-button-rounded ui-button-warning ui-button-flat"
+                                         title="Edit Attendance"
+                                         disabled="#{log.attendanceId == 0}"
+                                         action="#{attendanceBean.prepareEdit(log)}"
+                                         update=":editAttendanceDialog"
+                                         oncomplete="PF('editAttendanceDlg').show()" />
+                    </p:column>
                 </p:dataTable>
             </h:form>
         </p:card>
+
+        <!-- Edit Attendance Dialog -->
+        <p:dialog id="editAttendanceDialog" widgetVar="editAttendanceDlg" header="Edit Attendance Record"
+                  modal="true" responsive="true" fitViewport="true"
+                  width="420" resizable="false" showEffect="fade" hideEffect="fade">
+            <h:form id="editAttendanceForm">
+                <div class="p-fluid" style="padding: 10px;">
+                    <div style="margin-bottom: 15px;">
+                        <p:outputLabel value="Staff" style="font-weight: 600; display: block; margin-bottom: 6px;" />
+                        <p:inputText value="#{attendanceBean.getStaffName(attendanceBean.selectedAttendance.staffId)}"
+                                     readonly="true" style="background: #f8fafc;" />
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <p:outputLabel value="Date" style="font-weight: 600; display: block; margin-bottom: 6px;" />
+                        <h:outputText value="#{attendanceBean.selectedAttendance.workDate}" style="font-weight: 500;">
+                            <f:convertDateTime pattern="MMM dd, yyyy" />
+                        </h:outputText>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <p:outputLabel for="editCheckIn" value="Check-In Time" style="font-weight: 600; display: block; margin-bottom: 6px;" />
+                        <p:datePicker id="editCheckIn" value="#{attendanceBean.editCheckIn}"
+                                      timeOnly="true" pattern="HH:mm" showIcon="true" style="width: 100%;" />
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <p:outputLabel for="editCheckOut" value="Check-Out Time" style="font-weight: 600; display: block; margin-bottom: 6px;" />
+                        <p:datePicker id="editCheckOut" value="#{attendanceBean.editCheckOut}"
+                                      timeOnly="true" pattern="HH:mm" showIcon="true" style="width: 100%;" />
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <p:outputLabel for="editStatus" value="Status" style="font-weight: 600; display: block; margin-bottom: 6px;" />
+                        <p:selectOneMenu id="editStatus" value="#{attendanceBean.editStatus}" style="width: 100%;">
+                            <f:selectItem itemLabel="PRESENT" itemValue="PRESENT" />
+                            <f:selectItem itemLabel="ABSENT" itemValue="ABSENT" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <p:commandButton value="Cancel" type="button" onclick="PF('editAttendanceDlg').hide();"
+                                         styleClass="ui-button-secondary ui-button-flat" style="border-radius: 8px;" />
+                        <p:commandButton value="Save Changes" icon="pi pi-check"
+                                         action="#{attendanceBean.saveAttendanceEdit}"
+                                         update=":attendanceForm:attendanceTable :attendanceForm:messages"
+                                         oncomplete="if (!args.validationFailed) PF('editAttendanceDlg').hide();"
+                                         styleClass="ui-button-success" style="border-radius: 8px;" />
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
     </ui:define>
 </ui:composition>
+

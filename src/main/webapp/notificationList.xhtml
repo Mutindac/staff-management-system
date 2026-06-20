@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets" xmlns:p="primefaces" template="template.xhtml">
+
+    <ui:define name="title">Notifications - Staff Management</ui:define>
+
+    <ui:define name="content">
+        <h:form id="notifAdminForm">
+            <p:messages id="messages" showDetail="false" closable="true">
+                <p:autoUpdate />
+            </p:messages>
+
+            <div class="card premium-card">
+                <div class="flex justify-content-between align-items-center mb-4" style="flex-wrap: wrap; gap: 10px;">
+                    <h2 class="m-0">
+                        <i class="pi pi-bell mr-2 text-primary"></i> Sent Notifications
+                    </h2>
+                    <p:commandButton value="Create Notification" icon="pi pi-plus" type="button"
+                        onclick="PF('notificationDialog').show()" styleClass="ui-button-warning rounded-button" />
+                </div>
+
+                <p:dataTable id="dt-notifs" widgetVar="dtNotifs" var="notif"
+                    value="#{notificationListBean.allNotifications}" reflow="true" styleClass="products-table"
+                    rowKey="#{notif.notificationId}" paginator="true" rows="10" paginatorPosition="bottom"
+                    emptyMessage="No notifications have been sent yet." sortBy="#{notif.createdAt}">
+
+
+                    <p:column headerText="ID" sortBy="#{notif.notificationId}" style="width: 70px; text-align: center;">
+                        <h:outputText value="N-#{notif.notificationId}" />
+                    </p:column>
+
+                    <p:column headerText="Title" sortBy="#{notif.title}" filterBy="#{notif.title}"
+                        filterMatchMode="contains">
+                        <h:outputText value="#{notif.title}" style="font-weight: 600;" />
+                    </p:column>
+
+                    <p:column headerText="Message">
+                        <h:outputText
+                            value="#{notif.message.length() gt 80 ? notif.message.substring(0, 80).concat('...') : notif.message}"
+                            style="color: #475569; font-size: 13px;" />
+                    </p:column>
+
+                    <p:column headerText="Recipients" style="width: 110px; text-align: center;"
+                        sortBy="#{notificationListBean.getRecipientCount(notif.notificationId)}">
+                        <p:tag value="#{notificationListBean.getRecipientCount(notif.notificationId)} staff"
+                            severity="info" style="width: 100%; text-align: center; padding: 4px 8px;" />
+                    </p:column>
+
+                    <p:column headerText="Sent At" sortBy="#{notif.createdAt}" style="width: 160px;">
+                        <h:outputText value="#{notif.createdAt}">
+                            <f:convertDateTime pattern="MMM dd, yyyy hh:mm a" timeZone="Africa/Nairobi" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Sent By" style="width: 130px;">
+                        <h:outputText value="#{notificationListBean.getSenderName(notif.createdBy)}"
+                            style="color: #64748b;" />
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>
