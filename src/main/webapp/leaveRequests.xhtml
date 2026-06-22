@@ -46,7 +46,7 @@
                     </p:column>
                     
                     <p:column headerText="Days Remaining" style="text-align: center;">
-                        <h:outputText value="#{leave.daysRemaining != null ? leave.daysRemaining += ' Days' : '-'}" style="font-weight: 600; color: #{leave.daysRemaining != null and leave.daysRemaining le 3 ? '#ef4444' : '#10b981'};" />
+                        <h:outputText value="#{leave.daysRemaining != null ? leave.daysRemaining += ' Days' : '-'}" style="font-weight: 600;" styleClass="#{leave.daysRemaining != null and leave.daysRemaining le 3 ? 'text-red-500' : 'text-green-500'}" />
                     </p:column>
 
                     <p:column headerText="Reason">

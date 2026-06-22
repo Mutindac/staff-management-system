@@ -52,7 +52,7 @@
 
                     <p:column headerText="Time Left" style="text-align:center;">
                         <h:panelGroup rendered="#{req.status == 'APPROVED'}">
-                            <h:outputText value="#{req.daysRemaining} days" style="font-weight: 600; color: #{req.daysRemaining le 1 ? '#ef4444' : '#10b981'};" rendered="#{req.daysRemaining ge 0}" />
+                            <h:outputText value="#{req.daysRemaining} days" style="font-weight: 600;" styleClass="#{req.daysRemaining le 1 ? 'text-red-500' : 'text-green-500'}" rendered="#{req.daysRemaining ge 0}" />
                             <p:tag severity="danger" value="OVERDUE" rendered="#{req.daysRemaining lt 0}" />
                         </h:panelGroup>
                         <h:outputText value="-" rendered="#{req.status != 'APPROVED'}" />
