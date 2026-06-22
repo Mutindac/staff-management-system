@@ -61,11 +61,31 @@ public class AssetAdminBean implements Serializable {
     // Asset Image Uploads
     public void handleNewAssetImageUpload(FileUploadEvent event) {
         try {
-            byte[] bytes = event.getFile().getContent();
-            String base64Image = java.util.Base64.getEncoder().encodeToString(bytes);
-            newAsset.setImage(base64Image);
-            FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Image uploaded successfully."));
+            UploadedFile file = event.getFile();
+            if (file != null && file.getContent() != null && file.getContent().length > 0) {
+                if (file.getSize() > 2 * 1024 * 1024) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "File size exceeds the 2MB limit."));
+                    return;
+                }
+                String contentType = file.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Only image files are allowed."));
+                    return;
+                }
+                
+                byte[] bytes = file.getContent();
+                String ext = ".jpg";
+                if (contentType.equals("image/png")) ext = ".png";
+                else if (contentType.equals("image/gif")) ext = ".gif";
+                
+                String filename = System.currentTimeMillis() + ext;
+                java.nio.file.Path path = java.nio.file.Paths.get("/home/server/uploads/staff-management-system/assets", filename);
+                java.nio.file.Files.write(path, bytes);
+                
+                newAsset.setImage("/assets/" + filename);
+                FacesContext.getCurrentInstance().addMessage(null, 
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Image uploaded successfully."));
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to process image upload", e);
         }
@@ -73,13 +93,33 @@ public class AssetAdminBean implements Serializable {
 
     public void handleEditAssetImageUpload(FileUploadEvent event) {
         try {
-            byte[] bytes = event.getFile().getContent();
-            String base64Image = java.util.Base64.getEncoder().encodeToString(bytes);
-            if (currentAsset != null) {
-                currentAsset.setImage(base64Image);
+            UploadedFile file = event.getFile();
+            if (file != null && file.getContent() != null && file.getContent().length > 0) {
+                if (file.getSize() > 2 * 1024 * 1024) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "File size exceeds the 2MB limit."));
+                    return;
+                }
+                String contentType = file.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Only image files are allowed."));
+                    return;
+                }
+
+                byte[] bytes = file.getContent();
+                String ext = ".jpg";
+                if (contentType.equals("image/png")) ext = ".png";
+                else if (contentType.equals("image/gif")) ext = ".gif";
+                
+                String filename = System.currentTimeMillis() + ext;
+                java.nio.file.Path path = java.nio.file.Paths.get("/home/server/uploads/staff-management-system/assets", filename);
+                java.nio.file.Files.write(path, bytes);
+                
+                if (currentAsset != null) {
+                    currentAsset.setImage("/assets/" + filename);
+                }
+                FacesContext.getCurrentInstance().addMessage(null, 
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Image updated successfully."));
             }
-            FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Image updated successfully."));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to process image upload", e);
         }
@@ -103,6 +143,17 @@ public class AssetAdminBean implements Serializable {
 
     public void updateAsset() {
         try {
+            Asset oldAsset = assetDAO.getAssetById(currentAsset.getAssetId());
+            if (oldAsset != null) {
+                int quantityDiff = currentAsset.getTotalQuantity() - oldAsset.getTotalQuantity();
+                if (quantityDiff != 0) {
+                    int newAvailable = oldAsset.getAvailableQuantity() + quantityDiff;
+                    if (newAvailable < 0) newAvailable = 0;
+                    currentAsset.setAvailableQuantity(newAvailable);
+                } else {
+                    currentAsset.setAvailableQuantity(oldAsset.getAvailableQuantity());
+                }
+            }
             assetDAO.updateAsset(currentAsset);
             loadData();
             FacesContext.getCurrentInstance().addMessage(null, 

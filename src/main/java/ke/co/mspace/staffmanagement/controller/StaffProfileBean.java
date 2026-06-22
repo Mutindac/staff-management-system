@@ -185,9 +185,31 @@ public class StaffProfileBean implements Serializable {
         try {
             UploadedFile file = event.getFile();
             if (file != null && file.getContent() != null && file.getContent().length > 0) {
+                // Validation: Max size 2MB
+                if (file.getSize() > 2 * 1024 * 1024) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "File size exceeds the 2MB limit."));
+                    return;
+                }
+                
+                // Validation: Must be an image
+                String contentType = file.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Only image files are allowed."));
+                    return;
+                }
+                
                 byte[] bytes = file.getContent();
-                String base64Image = Base64.getEncoder().encodeToString(bytes);
-                currentUserAccount.setProfileImage(base64Image);
+                String ext = ".jpg";
+                if (contentType.equals("image/png")) ext = ".png";
+                else if (contentType.equals("image/gif")) ext = ".gif";
+                
+                String filename = System.currentTimeMillis() + ext;
+                java.nio.file.Path path = java.nio.file.Paths.get("/home/server/uploads/staff-management-system/profiles", filename);
+                java.nio.file.Files.write(path, bytes);
+                
+                currentUserAccount.setProfileImage("/profiles/" + filename);
                 getUserAccountDAO().updateUserAccount(currentUserAccount);
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Profile image updated successfully."));

@@ -27,7 +27,7 @@
                     <p:column headerText="Asset Name" sortBy="#{asset.name}" filterBy="#{asset.name}">
                         <div class="flex align-items-center">
                             <h:panelGroup rendered="#{not empty asset.image}">
-                                <img src="data:image/png;base64,#{asset.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; margin-right: 10px;" />
+                                <img src="#{asset.image != null and asset.image.startsWith('/') ? request.contextPath += '/images' += asset.image : 'data:image/png;base64,' += asset.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; margin-right: 10px;" />
                             </h:panelGroup>
                             <h:panelGroup rendered="#{empty asset.image}">
                                 <div style="width: 40px; height: 40px; background: #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
@@ -81,7 +81,7 @@
                         <h:panelGroup id="newImagePreview">
                             <h:panelGroup rendered="#{not empty assetAdminBean.newAsset.image}">
                                 <div style="margin-top: 10px;">
-                                    <img src="data:image/png;base64,#{assetAdminBean.newAsset.image}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;" />
+                                    <img src="#{assetAdminBean.newAsset.image != null and assetAdminBean.newAsset.image.startsWith('/') ? request.contextPath += '/images' += assetAdminBean.newAsset.image : 'data:image/png;base64,' += assetAdminBean.newAsset.image}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;" />
                                 </div>
                             </h:panelGroup>
                         </h:panelGroup>
@@ -116,7 +116,7 @@
                             <h:panelGroup id="editImagePreview">
                                 <h:panelGroup rendered="#{not empty assetAdminBean.currentAsset.image}">
                                     <div style="margin-top: 10px;">
-                                        <img src="data:image/png;base64,#{assetAdminBean.currentAsset.image}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;" />
+                                        <img src="#{assetAdminBean.currentAsset.image != null and assetAdminBean.currentAsset.image.startsWith('/') ? request.contextPath += '/images' += assetAdminBean.currentAsset.image : 'data:image/png;base64,' += assetAdminBean.currentAsset.image}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;" />
                                     </div>
                                 </h:panelGroup>
                             </h:panelGroup>
@@ -126,8 +126,8 @@
                             <p:spinner id="editTotal" value="#{assetAdminBean.currentAsset.totalQuantity}" min="1" required="true" />
                         </div>
                         <div class="p-field mb-4">
-                            <p:outputLabel for="editAvail" value="Available Quantity" style="font-weight: 500;" />
-                            <p:spinner id="editAvail" value="#{assetAdminBean.currentAsset.availableQuantity}" min="0" required="true" />
+                            <p:outputLabel for="editAvail" value="Available Quantity (Auto-calculated)" style="font-weight: 500;" />
+                            <p:spinner id="editAvail" value="#{assetAdminBean.currentAsset.availableQuantity}" disabled="true" />
                         </div>
                         <div style="display: flex; justify-content: flex-end; gap: 10px;">
                             <p:commandButton value="Cancel" type="button" onclick="PF('editAssetModal').hide();" styleClass="ui-button-secondary ui-button-flat" />
