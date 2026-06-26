@@ -48,19 +48,27 @@
         }
         .login-button {
             width: 100%;
-            margin-top: 25px !important;
-            border-radius: 25px !important;
-            padding: 10px 0 !important;
-            font-size: 16px !important;
+            margin-top: 20px !important;
+            border-radius: 4px !important;
+            padding: 6px 0 !important;
+            font-size: 13px !important;
             font-weight: 600 !important;
-            background: linear-gradient(90deg, #11998e, #38ef7d) !important;
-            border: none !important;
-            box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4) !important;
-            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+            background: linear-gradient(180deg, #1b329c 0%, #0000a2 100%) !important;
+            border: 1px solid #000066 !important;
+            border-bottom: 2px solid #000055 !important;
+            color: white !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.2) !important;
+            text-shadow: 0 -1px 0 rgba(0,0,0,0.3) !important;
+            transition: all 0.1s ease !important;
         }
         .login-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(56, 239, 125, 0.6) !important;
+            background: linear-gradient(180deg, #2540b0 0%, #000080 100%) !important;
+        }
+        .login-button:active {
+            background: #000080 !important;
+            border-bottom-width: 1px !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4) !important;
+            transform: translateY(1px);
         }
         .ui-messages {
             margin-bottom: 20px;
@@ -81,14 +89,14 @@
             </p:messages>
             
             <div class="ui-fluid">
-                <div class="p-field" style="margin-bottom: 1rem;">
-                    <p:outputLabel for="username" value="Username" style="font-weight: 600; margin-bottom: 3px; display: block; font-size: 14px;"/>
-                    <p:inputText id="username" value="#{loginBean.username}" required="true" requiredMessage="Username is required" style="padding: 8px; border-radius: 6px;" />
+                <div class="p-field" style="margin-bottom: 0.8rem;">
+                    <p:outputLabel for="username" value="Username" style="font-weight: 600; margin-bottom: 3px; display: block; font-size: 13px;"/>
+                    <p:inputText id="username" value="#{loginBean.username}" required="true" requiredMessage="Username is required" style="padding: 6px 8px; border-radius: 3px; border: 1px solid #ccc; width: 100%;" />
                 </div>
                 
                 <div class="p-field" style="margin-bottom: 0.8rem;">
-                    <p:outputLabel for="password" value="Password" style="font-weight: 600; margin-bottom: 3px; display: block; font-size: 14px;"/>
-                    <p:password id="password" value="#{loginBean.password}" required="true" requiredMessage="Password is required" style="padding: 8px; border-radius: 6px; width: 100%;" />
+                    <p:outputLabel for="password" value="Password" style="font-weight: 600; margin-bottom: 3px; display: block; font-size: 13px;"/>
+                    <p:password id="password" value="#{loginBean.password}" required="true" requiredMessage="Password is required" style="padding: 6px 8px; border-radius: 3px; border: 1px solid #ccc; width: 100%;" />
                 </div>
             </div>
             

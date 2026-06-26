@@ -341,7 +341,7 @@ public class StaffProfileBean implements Serializable {
         StringBuilder labels = new StringBuilder("[");
         StringBuilder data = new StringBuilder("[");
         StringBuilder bgColors = new StringBuilder("[");
-        String[] colors = {"#3b82f6", "#e94560", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"};
+        String[] colors = {"#0000a2", "#e94560", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"};
         try {
             boolean first = true;
             int colorIdx = 0;
@@ -430,7 +430,7 @@ public class StaffProfileBean implements Serializable {
             labelStr.append("\"").append(dayLabels[i]).append("\"");
             dataStr.append(hoursWorked[i]);
             // Use blue for hours worked, light gray if no hours
-            bgStr.append(hoursWorked[i] > 0 ? "\"#3b82f6\"" : "\"#e2e8f0\"");
+            bgStr.append(hoursWorked[i] > 0 ? "\"#0000a2\"" : "\"#e2e8f0\"");
         }
         dataStr.append("]"); labelStr.append("]"); bgStr.append("]");
 

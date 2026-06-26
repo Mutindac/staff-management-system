@@ -15,14 +15,15 @@
         
         .sidebar {
             width: 260px;
-            background: linear-gradient(180deg, #0f3460 0%, #1a1a2e 100%);
-            color: white;
+            background: #ffffff;
+            color: #334155;
             height: 100vh;
             overflow-y: auto;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            box-shadow: 1px 0 20px rgba(0,0,0,0.04);
+            border-right: 1px solid #f1f5f9;
             z-index: 1000;
         }
         
@@ -36,29 +37,38 @@
         }
         
         .sidebar-header {
-            padding: 20px 25px; display: flex; align-items: center; gap: 12px;
-            font-size: 20px; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 15px;
+            padding: 25px; display: flex; align-items: center; gap: 12px;
+            font-size: 22px; font-weight: 800; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px;
+            color: #0000a2; letter-spacing: -0.5px;
         }
-        .sidebar-header i { color: #3b82f6; }
         
         .nav-menu { list-style: none; padding: 0; margin: 0; flex: 1; }
-        .nav-item { margin: 0 12px 5px 12px; }
+        .nav-item { margin: 0; }
         .nav-link {
             display: flex; align-items: center; gap: 15px;
-            padding: 12px 15px; color: rgba(255,255,255,0.7);
+            margin: 2px 15px;
+            padding: 12px 15px; color: #64748b;
             text-decoration: none; border-radius: 8px;
-            font-weight: 500; font-size: 14px; transition: all 0.2s ease;
-            cursor: pointer; border: none; background: transparent; width: 100%; text-align: left;
+            font-weight: 600; font-size: 14px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer; border: none; background: transparent; width: calc(100% - 30px); text-align: left;
+            border-left: 4px solid transparent;
         }
-        .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.1); color: white; }
-        .nav-link i { font-size: 1.1rem; width: 20px; text-align: center; }
+        .nav-link:hover { background: #f8fafc; color: #0000a2; transform: translateX(4px); }
+        .nav-link.active { 
+            background: rgba(0, 0, 162, 0.05); 
+            color: #0000a2; 
+            border-left: 4px solid #0000a2; 
+        }
+        .nav-link i { font-size: 1.1rem; width: 20px; text-align: center; color: #94a3b8; transition: color 0.3s; }
+        .nav-link:hover i, .nav-link.active i { color: #0000a2; }
         
         .sidebar-user {
-            padding: 15px; border-top: 1px solid rgba(255,255,255,0.08);
-            display: flex; align-items: center; gap: 15px;
+            padding: 15px; border-top: 1px solid #f1f5f9;
+            display: flex; align-items: center; gap: 15px; margin-top: auto;
         }
         .sidebar-user-img {
-            width: 40px; height: 40px; border-radius: 20px; background: white; color: #0f3460;
+            width: 40px; height: 40px; border-radius: 20px; background: #e2e8f0; color: #0f172a;
             display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden;
         }
         
@@ -96,11 +106,37 @@
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .metric-box { padding: 20px; border-radius: 12px; background: white; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
         
-        .action-button { background: linear-gradient(90deg, #10b981, #059669) !important; border: none !important; border-radius: 8px !important; padding: 8px 15px !important; box-shadow: 0 4px 10px rgba(16,185,129,0.3) !important; }
-        .action-button.checkout { background: linear-gradient(90deg, #ef4444, #dc2626) !important; box-shadow: 0 4px 10px rgba(239,68,68,0.3) !important; }
-        .action-button.leave { background: linear-gradient(90deg, #8b5cf6, #7c3aed) !important; box-shadow: 0 4px 10px rgba(139,92,246,0.3) !important; }
+        .action-button { 
+            background: linear-gradient(180deg, #1b329c 0%, #0000a2 100%) !important; 
+            border: 1px solid #000066 !important; 
+            border-bottom: 2px solid #000055 !important; 
+            border-radius: 4px !important; 
+            padding: 4px 10px !important; 
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.2) !important; 
+            color: white !important; 
+            font-size: 11px !important; 
+            font-weight: 600 !important; 
+            text-shadow: 0 -1px 0 rgba(0,0,0,0.3) !important; 
+            transition: all 0.1s ease !important; 
+        }
+        .action-button:active {
+            background: #000080 !important;
+            border-bottom-width: 1px !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4) !important;
+            transform: translateY(1px);
+        }
+        .action-button.checkout { 
+            background: linear-gradient(180deg, #d32f2f 0%, #b60000 100%) !important; 
+            border: 1px solid #990000 !important; 
+            border-bottom: 2px solid #660000 !important; 
+        }
+        .action-button.leave { 
+            background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%) !important; 
+            border: 1px solid #6d28d9 !important; 
+            border-bottom: 2px solid #5b21b6 !important; 
+        }
         
-        .p-field { margin-bottom: 1rem; }
+        .p-field { margin-bottom: 0.75rem; }
 
         /* Notification Bell */
         .notif-bell-btn {
@@ -144,6 +180,33 @@
                     }
                 }
             });
+        });
+
+        // Theme Toggle Logic
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                var icon = document.getElementById('themeIcon');
+                if (icon) { icon.classList.remove('pi-moon'); icon.classList.add('pi-sun'); }
+            } else {
+                document.body.classList.remove('dark-mode');
+                var icon = document.getElementById('themeIcon');
+                if (icon) { icon.classList.remove('pi-sun'); icon.classList.add('pi-moon'); }
+            }
+        }
+
+        function toggleTheme() {
+            var isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('mspace_theme', !isDark ? 'dark' : 'light');
+            applyTheme(!isDark);
+        }
+
+        // Apply theme on load
+        document.addEventListener('DOMContentLoaded', function() {
+            var savedTheme = localStorage.getItem('mspace_theme');
+            if (savedTheme === 'dark') {
+                applyTheme(true);
+            }
         });
         //]]>
     </script>
@@ -202,10 +265,10 @@
                     </h:panelGroup>
                 </div>
                 <div style="flex: 1; overflow: hidden;">
-                    <div style="font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <div style="font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #1e293b;">
                         #{staffProfileBean.currentStaff.firstName} #{staffProfileBean.currentStaff.lastName}
                     </div>
-                    <div style="font-size: 12px; color: rgba(255,255,255,0.6);">#{staffProfileBean.roleName}</div>
+                    <div style="font-size: 12px; color: #64748b;">#{staffProfileBean.roleName}</div>
                 </div>
             </div>
         </div>
@@ -228,6 +291,11 @@
                     <p:commandButton title="Edit Profile" icon="pi pi-user-edit" type="button" 
                                      onclick="PF('profileModal').show();" 
                                      styleClass="ui-button-flat ui-button-plain rounded-button" style="width: 40px; height: 40px;"/>
+
+                    <!-- THEME TOGGLE BUTTON -->
+                    <button type="button" onclick="toggleTheme()" style="background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+                        <i id="themeIcon" class="pi pi-moon" style="font-size: 1.25rem; color: #64748b; transition: color 0.3s;"></i>
+                    </button>
 
                     <!-- NOTIFICATION BELL -->
                     <div class="notif-wrapper" id="notifWrapper" style="position: relative; display: flex; align-items: center;">
@@ -362,7 +430,7 @@
                                          update="@form :globalMessages"
                                          oncomplete="if (!args.validationFailed) PF('profileModal').hide();"
                                          styleClass="btn-primary" icon="pi pi-check"
-                                         style="background: linear-gradient(90deg, #3b82f6, #2563eb) !important; border: none; border-radius: 8px;" />
+                                         style="background: linear-gradient(90deg, #0000a2, #000080) !important; border: none; border-radius: 8px;" />
                     </div>
                 </div>
             </h:form>

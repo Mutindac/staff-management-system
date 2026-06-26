@@ -11,14 +11,15 @@
         
         .sidebar {
             width: 260px;
-            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+            background: #ffffff;
             color: #334155;
             height: 100vh;
             overflow-y: auto;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            box-shadow: 1px 0 20px rgba(0,0,0,0.04);
+            border-right: 1px solid #f1f5f9;
             z-index: 1000;
         }
         
@@ -32,24 +33,41 @@
         }
         
         .sidebar-header {
-            padding: 20px 25px; display: flex; align-items: center; gap: 12px;
-            font-size: 20px; font-weight: 700; border-bottom: 1px solid #e2e8f0; margin-bottom: 15px;
-            color: #e94560;
+            padding: 25px; display: flex; align-items: center; gap: 12px;
+            font-size: 22px; font-weight: 800; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px;
+            color: #0000a2; letter-spacing: -0.5px;
         }
         
         .nav-menu { list-style: none; padding: 0; margin: 0; flex: 1; }
-        .nav-item { margin: 0 12px 5px 12px; }
+        .nav-item { margin: 0; }
         .nav-link {
             display: flex; align-items: center; gap: 15px;
-            padding: 12px 15px; color: #475569;
+            margin: 2px 15px;
+            padding: 12px 15px; color: #64748b;
             text-decoration: none; border-radius: 8px;
-            font-weight: 600; font-size: 14px; transition: all 0.2s ease;
-            cursor: pointer; border: none; background: transparent; width: 100%; text-align: left;
+            font-weight: 600; font-size: 14px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer; border: none; background: transparent; width: calc(100% - 30px); text-align: left;
+            border-left: 4px solid transparent;
         }
-        .nav-link:hover, .nav-link.active { background: rgba(0,0,0,0.05); color: #0f172a; }
-        .nav-link i { font-size: 1.1rem; width: 20px; text-align: center; color: #e94560; }
+        .nav-link:hover { background: #f8fafc; color: #0000a2; transform: translateX(4px); }
+        .nav-link.active { 
+            background: rgba(0, 0, 162, 0.05); 
+            color: #0000a2; 
+            border-left: 4px solid #0000a2; 
+        }
+        .nav-link i { font-size: 1.1rem; width: 20px; text-align: center; color: #94a3b8; transition: color 0.3s; }
+        .nav-link:hover i, .nav-link.active i { color: #0000a2; }
         
-        .nav-header { padding: 15px 20px 5px 25px; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-header { 
+            padding: 25px 25px 10px 25px; 
+            font-size: 11px; font-weight: 700; color: #cbd5e1; 
+            text-transform: uppercase; letter-spacing: 1.5px; 
+            display: flex; align-items: center; gap: 10px;
+        }
+        .nav-header::after {
+            content: ""; flex: 1; height: 1px; background: #f1f5f9;
+        }
 
         .topbar {
             height: 70px; background: white; padding: 0 30px;
@@ -82,6 +100,33 @@
                 if (!$(e.target).closest('.sidebar').length && !$(e.target).closest('.mobile-toggle').length) {
                     $('.sidebar').removeClass('open');
                 }
+            }
+        });
+
+        // Theme Toggle Logic
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                var icon = document.getElementById('themeIcon');
+                if (icon) { icon.classList.remove('pi-moon'); icon.classList.add('pi-sun'); }
+            } else {
+                document.body.classList.remove('dark-mode');
+                var icon = document.getElementById('themeIcon');
+                if (icon) { icon.classList.remove('pi-sun'); icon.classList.add('pi-moon'); }
+            }
+        }
+
+        function toggleTheme() {
+            var isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('mspace_theme', !isDark ? 'dark' : 'light');
+            applyTheme(!isDark);
+        }
+
+        // Apply theme on load
+        document.addEventListener('DOMContentLoaded', function() {
+            var savedTheme = localStorage.getItem('mspace_theme');
+            if (savedTheme === 'dark') {
+                applyTheme(true);
             }
         });
         //]]>
@@ -167,8 +212,13 @@
                 <div class="topbar-user" style="display: flex; align-items: center; gap: 15px;">
                     <h:form style="margin:0;">
                         <p:commandButton value="Create Notification" icon="pi pi-bell" type="button"
-                            onclick="PF('notificationDialog').show()" styleClass="ui-button-warning rounded-button" />
+                            onclick="PF('notificationDialog').show()" styleClass="btn-primary" />
                     </h:form>
+
+                    <!-- THEME TOGGLE BUTTON -->
+                    <button type="button" onclick="toggleTheme()" style="background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center;">
+                        <i id="themeIcon" class="pi pi-moon" style="font-size: 1.25rem; color: #64748b; transition: color 0.3s;"></i>
+                    </button>
 
                     <span style="color: #64748b; font-size: 14px; font-weight: 600;">
                         Welcome, #{loginBean.loggedInUser != null ? loginBean.loggedInUser.username : 'Admin'}
@@ -176,7 +226,7 @@
 
                     <h:form style="margin:0;">
                         <p:commandButton value="Logout" action="#{loginBean.logout}" icon="pi pi-power-off"
-                            styleClass="ui-button-danger rounded-button ui-button-flat" />
+                            styleClass="ui-button-danger ui-button-flat" />
                     </h:form>
                 </div>
             </div>
@@ -199,32 +249,32 @@
     </div>
 
     <!-- NOTIFICATION DIALOG -->
-    <p:dialog header="Create Notification" widgetVar="notificationDialog" modal="true" width="700" responsive="true" fitViewport="true" resizable="false" closable="true">
+    <p:dialog header="Create Notification" widgetVar="notificationDialog" modal="true" width="450" responsive="true" fitViewport="true" resizable="false" closable="true" style="border-radius: 8px; border: none;">
         <h:form id="notificationForm">
-            <div style="max-height: 80vh; overflow-y: auto; overflow-x: hidden; padding: 10px;">
-                <p:messages id="notifMessages" showDetail="true" closable="true" style="margin-bottom: 15px;" />
+            <div style="max-height: 80vh; overflow-y: auto; overflow-x: hidden; padding: 5px;">
+                <p:messages id="notifMessages" showDetail="true" closable="true" style="margin-bottom: 10px;" />
                 <div class="p-fluid">
-                    <div style="margin-bottom:20px;">
-                        <p:outputLabel for="title" value="Title" style="display:block; margin-bottom:8px; font-weight:600;" />
+                    <div style="margin-bottom:10px;">
+                        <p:outputLabel for="title" value="Title" style="display:block; margin-bottom:4px; font-weight:600; font-size:13px;" />
                         <p:inputText id="title" value="#{notificationController.notification.title}" style="width:100%;" />
                     </div>
-                    <div style="margin-bottom:20px;">
-                        <p:outputLabel for="message" value="Message" style="display:block; margin-bottom:8px; font-weight:600;" />
-                        <p:inputTextarea id="message" rows="6" autoResize="false" maxlength="1000" value="#{notificationController.notification.message}" style="width:100%;" />
+                    <div style="margin-bottom:10px;">
+                        <p:outputLabel for="message" value="Message" style="display:block; margin-bottom:4px; font-weight:600; font-size:13px;" />
+                        <p:inputTextarea id="message" rows="3" autoResize="false" maxlength="1000" value="#{notificationController.notification.message}" style="width:100%;" />
                     </div>
-                    <div style="margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+                    <div style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
                         <p:selectBooleanCheckbox value="#{notificationController.sendToAll}">
                             <p:ajax update="staffList" />
                         </p:selectBooleanCheckbox>
-                        <h:outputText value="Send To All Staff" />
+                        <h:outputText value="Send To All Staff" style="font-size:13px; font-weight:500;" />
                     </div>
-                    <div style="margin-bottom:25px;">
-                        <p:outputLabel value="Select Employees" style="display:block; margin-bottom:10px; font-weight:600;" />
-                        <p:selectManyMenu id="staffList" value="#{notificationController.selectedStaff}" disabled="#{notificationController.sendToAll}" style="width:100%; height:220px;">
+                    <div style="margin-bottom:15px;">
+                        <p:outputLabel value="Select Employees" style="display:block; margin-bottom:6px; font-weight:600; font-size:13px;" />
+                        <p:selectCheckboxMenu id="staffList" value="#{notificationController.selectedStaff}" disabled="#{notificationController.sendToAll}" label="Select Staff" multiple="true" filter="true" filterMatchMode="contains" style="width:100%;" panelStyle="width: 30rem" scrollHeight="250">
                             <f:selectItems value="#{notificationController.allStaff}" var="s" itemLabel="#{s.firstName} #{s.lastName}" itemValue="#{s.staffId}" />
-                        </p:selectManyMenu>
+                        </p:selectCheckboxMenu>
                     </div>
-                    <p:commandButton value="Send Notification" icon="pi pi-send" action="#{notificationController.sendNotification}" process="@form" update="@form notifMessages" oncomplete="if (!args.validationFailed) setTimeout(function(){ PF('notificationDialog').hide(); }, 1500);" styleClass="ui-button-success" style="width:100%;" />
+                    <p:commandButton value="Send Notification" icon="pi pi-send" action="#{notificationController.sendNotification}" process="@form" update="@form notifMessages" oncomplete="if (!args.validationFailed) setTimeout(function(){ PF('notificationDialog').hide(); }, 1500);" styleClass="btn-primary" style="width:100%;" />
                 </div>
             </div>
         </h:form>

@@ -55,7 +55,7 @@ public class DashboardBean implements Serializable{
     }
     
     private void createDepartmentChart() {
-        String[] colors = {"#3b82f6", "#e94560", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"};
+        String[] colors = {"#0000a2", "#e94560", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"};
         Map<Integer, Integer> deptCounts = new HashMap<>();
         try {
             StaffDAO staffDAO = getStaffDAO();
@@ -171,7 +171,7 @@ public class DashboardBean implements Serializable{
                 + "  \"datasets\": [{"
                 + "    \"label\": \"Headcount per role\","
                 + "    \"data\": " + data.toString() + ","
-                + "    \"backgroundColor\": \"#3b82f6\""
+                + "    \"backgroundColor\": \"#0000a2\""
                 + "  }]"
                 + "},"
                 + "\"options\": {"

@@ -11,39 +11,45 @@
         <h4 class="page-title">Admin Dashboard Overview</h4>
 
         <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
-            <p:card styleClass="premium-card" style="flex: 1; min-width: 250px; border-left: 5px solid #0f3460; margin: 0;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <p style="color: #888; font-size: 14px; margin: 0;">Total Staff</p>
-                        <h2 style="font-size: 32px; color: #1a1a2e; margin: 5px 0;">#{dashboardBean.totalStaff}</h2>
+            <h:link outcome="staffList.xhtml" style="text-decoration: none; flex: 1; min-width: 200px; display: block; transition: transform 0.2s;">
+                <div class="premium-card" style="padding: 10px 15px; border-left: 4px solid #0000a2; margin: 0; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <p style="color: #888; font-size: 12px; margin: 0; font-weight: 600; text-transform: uppercase;">Total Staff</p>
+                            <h2 style="font-size: 22px; color: #1a1a2e; margin: 2px 0 0 0;">#{dashboardBean.totalStaff}</h2>
+                        </div>
+                        <i class="pi pi-users" style="font-size: 1.5rem; color: #0000a2; opacity: 0.8;"></i>
                     </div>
-                    <i class="pi pi-users" style="font-size: 2rem; color: #0f3460; opacity: 0.8;"></i>
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; font-size: 11px; color: #64748b;">
+                        <span><i class="pi pi-check-circle" style="color: #10b981; margin-right: 4px;"></i>Active: <strong>#{dashboardBean.activeStaff}</strong></span>
+                        <span><i class="pi pi-times-circle" style="color: #ef4444; margin-right: 4px;"></i>Inactive: <strong>#{dashboardBean.inactiveStaff}</strong></span>
+                    </div>
                 </div>
-                <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; display: flex; justify-content: space-between; font-size: 13px; color: #666;">
-                    <span><i class="pi pi-check-circle" style="color: #28a745; margin-right: 4px;"></i>Active: <strong>#{dashboardBean.activeStaff}</strong></span>
-                    <span><i class="pi pi-times-circle" style="color: #dc3545; margin-right: 4px;"></i>Inactive: <strong>#{dashboardBean.inactiveStaff}</strong></span>
-                </div>
-            </p:card>    
+            </h:link>
 
-            <p:card styleClass="premium-card" style="flex: 1; min-width: 250px; border-left: 5px solid #e94560; margin: 0;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <p style="color: #888; font-size: 14px; margin: 0;">Staff Roles</p>
-                        <h2 style="font-size: 32px; color: #1a1a2e; margin: 5px 0;">#{dashboardBean.allRoles}</h2>
+            <h:link outcome="roleList.xhtml" style="text-decoration: none; flex: 1; min-width: 200px; display: block; transition: transform 0.2s;">
+                <div class="premium-card" style="padding: 10px 15px; border-left: 4px solid #b60000; margin: 0; height: 100%; box-sizing: border-box; display: flex; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <div>
+                            <p style="color: #888; font-size: 12px; margin: 0; font-weight: 600; text-transform: uppercase;">Staff Roles</p>
+                            <h2 style="font-size: 22px; color: #1a1a2e; margin: 2px 0 0 0;">#{dashboardBean.allRoles}</h2>
+                        </div>
+                        <i class="pi pi-id-card" style="font-size: 1.5rem; color: #b60000; opacity: 0.8;"></i>
                     </div>
-                    <i class="pi pi-id-card" style="font-size: 2rem; color: #e94560; opacity: 0.8;"></i>
                 </div>
-            </p:card>
+            </h:link>
 
-            <p:card styleClass="premium-card" style="flex: 1; min-width: 250px; border-left: 5px solid #11998e; margin: 0;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <p style="color: #888; font-size: 14px; margin: 0;">Departments</p>
-                        <h2 style="font-size: 32px; color: #1a1a2e; margin: 5px 0;">#{dashboardBean.allDepartments}</h2>
+            <h:link outcome="departmentList.xhtml" style="text-decoration: none; flex: 1; min-width: 200px; display: block; transition: transform 0.2s;">
+                <div class="premium-card" style="padding: 10px 15px; border-left: 4px solid #11998e; margin: 0; height: 100%; box-sizing: border-box; display: flex; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <div>
+                            <p style="color: #888; font-size: 12px; margin: 0; font-weight: 600; text-transform: uppercase;">Departments</p>
+                            <h2 style="font-size: 22px; color: #1a1a2e; margin: 2px 0 0 0;">#{dashboardBean.allDepartments}</h2>
+                        </div>
+                        <i class="pi pi-building" style="font-size: 1.5rem; color: #11998e; opacity: 0.8;"></i>
                     </div>
-                    <i class="pi pi-building" style="font-size: 2rem; color: #11998e; opacity: 0.8;"></i>
                 </div>
-            </p:card>
+            </h:link>
         </div>
 
         <!-- Charts Section -->

@@ -21,7 +21,7 @@
             .notif-page-title { margin: 0 0 5px 0; font-size: 16px; font-weight: 600; color: #1e293b; }
             .notif-page-msg { margin: 0 0 10px 0; font-size: 14px; color: #475569; line-height: 1.5; white-space: pre-wrap; }
             .notif-page-meta { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 15px; }
-            .unread-badge { background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
+            .unread-badge { background: #0000a2; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
         </style>
     </ui:define>
 
@@ -31,7 +31,7 @@
     <ui:define name="content">
         <div class="premium-card">
             <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 class="card-title"><i class="pi pi-bell" style="color: #3b82f6;"></i> Inbox</h3>
+                <h3 class="card-title"><i class="pi pi-bell" style="color: #0000a2;"></i> Inbox</h3>
                 <h:form id="markReadForm">
                     <p:commandButton value="Mark All as Read" action="#{staffProfileBean.markAllNotificationsRead}" 
                                      update="@form :notifListForm :notifBellForm" icon="pi pi-check-circle"
